@@ -1,0 +1,129 @@
+\documentclass[10pt, twocolumn]{article}
+
+\usepackage{times,url}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{rotating}
+\usepackage{xcolor}
+\usepackage{array}
+
+\usepackage[sort]{cite}
+
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\def\Section {\S}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{example}[1][Example]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{remark}[1][Remark]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+% Macros:
+\newcommand{\ie}{{\it i.e.}}
+\newcommand{\eg}{{\it e.g.}}
+\newcommand{\cf}{{\it cf.}}
+\newcommand{\etc}{{\it etc.}}
+\newcommand{\viz}{{\it viz.}}
+\newcommand{\apriori}{{\it a priori}}
+\newcommand{\eat}[1]{}
+
+% Notes:
+\newcommand{\num}[1]{{\color{red}\bf {#1}}}
+
+\newcommand{\giulia}[1]{{\color{red} {#1}~(Giulia)}}
+\newcommand{\wenting}[1]{{\color{blue}{#1}~(Wenting)}}
+
+
+% Signed quotes:
+\def\signed #1{{\leavevmode\unskip\nobreak\hfil\penalty50\hskip2em
+  \hbox{}\nobreak\hfil(#1)%
+    \parfillskip=0pt \finalhyphendemerits=0 \endgraf}}
+
+\newsavebox\mybox
+\newenvironment{aquote}[1]
+  {\savebox\mybox{#1}\begin{quote}}
+    {\signed{\usebox\mybox}\end{quote}}
+
+\sloppy
+\begin{document}
+
+\title{Deanonymizing Anonymous Messaging Social Networks}
+
+\author{Giulia Fanti and Wenting Zheng}
+
+   \date{}
+   \maketitle
+   \thispagestyle{empty}
+\section{Related Work}
+
+\subsection{Anonymous Social Networks} 
+Recent years have seen the rise of a new class of social network, predicated entirely on anonymous microblogging.
+Such networks, including Secret \cite{secret}, Whisper \cite{whisper}, and Yik Yak \cite{yikyak}, enable users to share short messages with their friends without including any authorship information in the metadata. 
+Whenever a user `likes' an incoming message, that message passes to the user's friends.
+Under this spreading pattern, messages propagate across the network like an epidemic.
+While these social networks are anonymous to individual network users, service providers store all communications (along with authorship information) on centralized servers.
+The social networks are therefore not anonymous to the service providers themselves, as well as government agencies or hackers who obtain access to these centralized servers.
+Our work considers a \emph{different} adversary that is more powerful than a single user, but less powerful than a government agency or service provider.
+Because this class of social networks is relatively new, to the best of our knowledge, no existing research exists on deanonymizing them.
+
+These social networks are not the gold standard for anonymous communication, though. In the rest of this section, we will discuss the state-of-the-art in anonymous broadcast communication, and explain why those methods have not gained traction outside the research community.
+A wide swath of literature---spanning a few decades---considers the problem of communicating anonymously.
+A large portion of this literatures focuses on \emph{point-to-point} communication, offering properties like sender anonymity, receiver anonymity, and/or sender-receiver unlinkability. 
+Work in this area includes Chaum's mix-nets \cite{chaum1981untraceable}, Tor \cite{tor}, Tarzan \cite{tarzan}, Crowds \cite{reiter1998crowds}, and Herbivore \cite{goel2003herbivore}.
+While this body of literature has been impactful even outside the academic community, it is a different problem than the one we wish to address.
+
+We will instead focus on approaches that enable anonymous \emph{broadcast} communication.
+Chaum's seminal work on the dining cryptographers problem launched this area of study \cite{chaum88}.
+The problem is as follows: a group of cryptographers goes out to dinner. After the meal, they want to learn if one of them has paid the check, without revealing who paid.
+Chaum's solution, known colloquially as a DC-net, requires each cryptographer to flip a coin (in private) with the individuals on his left and right. Each coin flip is hence observed by exactly two people.
+Then, each cryptographer publishes the XOR of the two observed coin flips; if cryptographer Alice paid the check, then instead of publishing the true XOR of her coin flips, she publishes the opposite (e.g., a 0 instead of a 1).
+To learn the desired information, each cryptographer XOR's all the published bits. If nobody paid the check, this bitwise sum will evaluate to 0; otherwise it will evaluate to 1.
+DC-nets offer perfect anonymity, but they also rely on some assumptions that may not realize in practice, such as only one individual communicating at once.
+
+DC-nets initiated an area of study on methods for robust, scalable, and anonymous broadcast communication. 
+Some of this work focuses on developing new anonymity primitives, such as anonymous broadcast encryption \cite{libert2012anonymous, fazio2012outsider}.
+Broadcast encryption aims to send an encrypted message such that only a subset of recipients can decrypt the message.
+Classical broadcast encryption schemes require that each recipient know the entire set of intended recipients, which violates recipient anonymity; anonymous broadcast encryption aims to relax this constraint. 
+This work is outside our scope, as we are interested in broadcast systems that provide \emph{sender} anonymity.
+
+
+Another branch of work focuses on refining DC-nets to exhibit better efficiency or robustness properties \cite{waidner1989dining,golle2004dining,corrigan2010dissent}.
+Advances in this area have led to various applications, including voting systems \cite{fujioka1993practical,van2010anonymous}, distributed storage \cite{freeHavenProject}, and even point-to-point anonymous messaging \cite{goel2003herbivore}.
+The details of these schemes are not important to understanding our current work; the key take-away message is that this body of work only uses ideas from DC-nets on a relatively small scale.
+For instance, Herbivore \cite{goel2003herbivore} is a point-to-point messaging system that uses DC-nets to provide sender anonymity---but only within a small cluster of the network.
+Using DC-nets to communicate across an entire network would be massively impractical, due to their vulnerability to Sybils, Byzantines, and denial-of-service attacks.
+These problems have been studied in depth, but even proposed solutions are likely to face challenges at an Internet-wide scale \cite{golle2004dining,corrigan2010dissent}.
+
+The body of anonymous broadcast research has not yet found its way into a large-scale, widely-adopted social network. 
+A number of factors might explain this, including the scalability and security challenges we discussed, as well as the difficulty of monetizing truly anonymous services.
+The end result is that commercial anonymous social networks described earlier, such as Secret and Whisper, have built significant user bases while offering fairly weak anonymity properties.
+They consequently present a juicy target for adversaries hoping to learn people's sensitive secrets.
+In this work, we aim to pinpoint exactly how powerful an adversary must be to deanonymize such a network.
+
+\subsection{Deanonymizing Social Networks}
+Many social networks have been deanonymized in the past.
+This is usually done via correlations with side information. (Discuss methods of deanonymization, and why we can't use them)
+
+
+\subsection{Identifying a Rumor Source}
+As mentioned previously, we are considering an adversarial model with limited power to create Sybil nodes and potentially ``convert" legitimate nodes into spies. In this section, we discuss prior work that will inform our inference algorithms for deanonymizing users.
+
+Over the last five years, the research community has displayed growing interest in the problem of identifying the source of an infection spreading according to some regular random process. 
+This trend started with the work of Shah and Zaman \cite{shah2011rumors}.
+
+\cite{shah2012rumor}
+
+
+\bibliography{references}
+\bibliographystyle{ieeetr}
+\end{document}
