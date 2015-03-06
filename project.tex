@@ -113,9 +113,10 @@ They consequently present a juicy target for adversaries hoping to learn people'
 In this work, we study exactly how powerful an adversary must be to deanonymize such a network.
 
 \subsection{Deanonymizing Social Networks}
-Many social networks have been deanonymized in the past.
-This is usually done via correlations with side information. (Discuss methods of deanonymization, and why we can't use them)
+Researchers have worked on different techniques for deanonymizing social networks. One of the earlier approaches~\cite{backstrom2007wherefore} aims to deanonymize networks 
 
+One recent~\cite{narayanan2009anonymizing} approach focuses on deanonymizing large scale social networks by developing a very generic re-identification algorithm. Social graph anonymizaion usually consists of releasing some partial information on a \emph{sanitized} version of the graph. 
+The paper identifies several different types of attackers, including governments, corporations, etc. The attackers are assumed to know some auxiliary information about the graph, designated as $S_{AUX}$, which is a different network such that $S_{AUX}$ and the original network overlap. The algorithm consists of two steps, seed identification and propagation. Seed identification attempt to find a small amount of users that are present both in the anonymized network and the auxiliary graph. The propagation stage then attempts to 
 
 \subsection{Identifying a Rumor Source}
 As mentioned previously, we are considering an adversarial model with limited power to create Sybil nodes and potentially convert legitimate nodes into ``spies."
