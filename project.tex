@@ -113,7 +113,10 @@ They consequently present a juicy target for adversaries hoping to learn people'
 In this work, we study exactly how powerful an adversary must be to deanonymize such a network.
 
 \subsection{Deanonymizing Social Networks}
-Researchers have worked on different techniques for deanonymizing social networks. One of the earlier approaches~\cite{backstrom2007wherefore} considers two different approaches for network deanonymization, including passive and active attacks. The network is modeled as a list of nodes and edges. Nodes are anonymized (original IDs replaced with new IDs), while the communication links (graph edges) are preserved.
+
+Researchers have worked on different techniques for deanonymizing social networks. Early approaches on user deanonymization~\cite{novak2004anti,narayanan2006break} come from inferring user identify from public messages sent by these users. For example, an early work~\cite{novak2004anti} analyzed pseudonymous posts on online bulletin boards. The paper uses machine learning techniques and data mining to analyze these posts. These algorithms extract features and detect post similarity, therefore inferring that some aliases are being used by the same user. 
+
+A more sophisticated approach~\cite{backstrom2007wherefore} considers what happens when you have more limited information, such as only information regarding node connections. The paper models the network as a list of nodes and edges. Nodes are anonymized (original IDs replaced with new IDs), while the communication links (graph edges) are preserved. The attackers have a list of target nodes that they wish to compromise.
 The attacks presented in this paper assume that the attackers can construct new nodes a network graph $G$ before it is anonymized. These fake nodes attempt to communicate with a list of targeted honest nodes. These communications are recorded as edges. After the graph is anonymized, the attackers will attempt to identify the fake nodes along with the targeted nodes. 
 The aim of our project is a little different. We are attempting to deanonymize an online network that is already anonymized to a certain extent. A subset of the nodes in the network are compromised, and the attackers will leverage anonymous messages to reconstruct the social network graph as well as re-identifying nodes. 
 
