@@ -76,13 +76,13 @@ The social networks are therefore not anonymous to the service providers themsel
 Our work considers a \emph{different} adversary that is more powerful than a single user, but less powerful than a government agency or service provider.
 Because this class of social networks is relatively new, to the best of our knowledge, no existing research exists on deanonymizing them.
 
-These social networks are not the gold standard for anonymous communication, though. In the rest of this section, we will discuss the state-of-the-art in anonymous broadcast communication, and explain why those methods have not gained traction outside the research community.
+These social networks are not the gold standard for anonymous communication. In the rest of this section, we will discuss the state-of-the-art in anonymous broadcast communication, and explain why those methods have not gained traction outside the research community.
 A wide swath of literature---spanning a few decades---considers the problem of communicating anonymously.
-A large portion of this literatures focuses on \emph{point-to-point} communication, offering properties like sender anonymity, receiver anonymity, and/or sender-receiver unlinkability. 
+Much of this work focuses on \emph{point-to-point} communication, offering properties like sender anonymity, receiver anonymity, and/or sender-receiver unlinkability. 
 Work in this area includes Chaum's mix-nets \cite{chaum1981untraceable}, Tor \cite{tor}, Tarzan \cite{tarzan}, Crowds \cite{reiter1998crowds}, and Herbivore \cite{goel2003herbivore}, just to name a few.
-While this body of literature has been impactful even outside the academic community, it is a different problem than the one we wish to address.
+While this body of literature has been impactful even outside the academic community, it is different from our problem of interest.
 
-We will instead focus on approaches that enable anonymous \emph{broadcast} communication.
+We instead focus on approaches that enable anonymous \emph{broadcast} communication.
 Chaum's seminal work on the dining cryptographers problem launched this area of study \cite{chaum88}.
 The problem is as follows: a group of cryptographers goes out to dinner. After the meal, they want to learn if one of them has paid the check, without revealing who paid.
 Chaum's solution, known colloquially as a DC-net, requires each cryptographer to flip a coin (in private) with the individuals on his left and right. Each coin flip is hence observed by exactly two people.
@@ -90,10 +90,10 @@ Then, each cryptographer publishes the XOR of the two observed coin flips; if cr
 To learn the desired information, each cryptographer XOR's all the published bits. If nobody paid the check, this bitwise sum will evaluate to 0; otherwise it will evaluate to 1.
 DC-nets offer perfect anonymity, but they also rely on some assumptions that may not realize in practice, such as honest participants, or only one individual communicating at once.
 
-DC-nets launched an area of study on methods for robust, scalable, and anonymous broadcast communication. 
+Chaum's work on DC-nets launched a great deal of study on robust, scalable, and anonymous broadcast communication. 
 Some of this work focuses on developing new anonymity primitives, such as anonymous broadcast encryption \cite{libert2012anonymous, fazio2012outsider}.
 Broadcast encryption aims to send an encrypted message such that only a subset of recipients can decrypt the message.
-Classical broadcast encryption schemes require that each recipient know the entire set of intended recipients, which violates recipient anonymity; anonymous broadcast encryption aims to relax this constraint. 
+Classical broadcast encryption schemes require each recipient to know the entire set of intended recipients, which violates recipient anonymity; anonymous broadcast encryption aims to relax this constraint. 
 This work is outside our scope, as we are interested in broadcast systems that provide \emph{sender} anonymity.
 
 
@@ -102,12 +102,12 @@ For instance, \cite{golle2004dining} proposes new, non-interactive DC-net constr
 \cite{corrigan2010dissent} extends this work by proposing a DC-net with a \emph{shuffled send} primitive, which helps provide integrity, anonymity, and accountability within the network.
 These proposed improvements to DC-nets are efficient given the features they offer, but they are likely to face challenges at an Internet-wide scale.
 Advances in the construction of DC-nets have led to various applications, including voting systems \cite{fujioka1993practical,van2010anonymous}, distributed storage \cite{freeHavenProject}, and even point-to-point anonymous messaging \cite{goel2003herbivore}.
-The details of these schemes are not important to understanding our current work; the key take-away message is that this body of work only uses ideas from DC-nets on a relatively small scale.
+The details of these schemes are not important to understanding our current work; the key take-away is that they all use ideas from DC-nets on a relatively small scale.
 For instance, Herbivore \cite{goel2003herbivore} is a point-to-point messaging system that uses DC-nets to provide sender anonymity---but only within a small cluster of the network.
 Using DC-nets to communicate across an entire network would be massively impractical, due to their vulnerability to Sybils, Byzantines, and denial-of-service attacks.
 
 The body of anonymous broadcast research has not yet found its way into a large-scale, widely-adopted social network. 
-A number of factors might explain this, including the scalability and security challenges we mentioned, as well as the difficulty of monetizing truly anonymous services.
+Several factors might explain this, including the scalability and security challenges we mentioned, as well as the difficulty of monetizing truly anonymous services.
 The end result is that commercial anonymous social networks described earlier, such as Secret and Whisper, have built significant user bases while offering fairly weak anonymity properties.
 They consequently present a juicy target for adversaries hoping to learn people's sensitive secrets.
 In this work, we study exactly how powerful an adversary must be to deanonymize such a network.
@@ -127,7 +127,11 @@ Over the last five years, the research community has displayed growing interest 
 This trend started with the work of Shah and Zaman \cite{shah2011rumors}. Their problem is as follows: An infection is propagating over a graph according to a diffusion random process. That is, each infected node infects an uninfected neighbor in an exponentially-distributed amount of time. Given the underlying graph structure and a single snapshot of the infection pattern at a given time, can the ``patient-zero" be inferred? The authors propose a metric called \emph{rumor centrality}, which describes the centrality of a node in the infected subgraph. They present an efficient method for computing rumor centrality and show that when the underlying social network is tree-structured, the node with maximum rumor-centrality is the true patient-zero with high probability. The intuition is that regular, symmetric spreading patterns (like diffusion) tend to place the true source in the center of the infection graph with high probability. 
 In simulation, a heuristic adaptation of rumor centrality also proved useful for identifying sources in loopy graphs.
 
-Subsequent work has examined many variants of this problem. Examples include considering more general graph structures \cite{shah2012rumor}, a spy-based adversarial model \cite{pinto2012locating,luo2013identify}.
+Subsequent work has examined many variants of this problem. Examples include considering more general graph structures \cite{shah2012rumor} and altering the estimator's data-collection strategy \cite{pinto,karamchandani2013rumor,luo2013identify}. These last few papers forego the snapshot-based estimation of \cite{shah2011rumors} in favor of sampled information. The estimator samples a subset of infected nodes, and learns the timestamp at which each node first received the infection. This is equivalent to our notion of placing ``spies" in the network. 
+This follow-up work mainly reinforces the point that rumor centrality is a good estimator. (expand on this)
+Another class of research instead develops new estimation techniques based on message-passing \cite{lokhov2014inferring} and spectral methods \cite{fioriti2012predicting}.
+This 
+
 
 
 \bibliography{references}
