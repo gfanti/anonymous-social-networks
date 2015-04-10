@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 matplotlib.use('Agg')
 
 from node import *
+from generators import *
 
 MALICIOUS = "bad"
 HONEST = "good"
@@ -39,25 +40,6 @@ class Simulator(object):
             self.current_time = max(t, self.current_time + 1)
             event()
 
-class RandomGraphGenerator(object):
-    def __init__(self, num_nodes, edges_conn):
-        self.num_nodes = num_nodes
-        self.edges_conn = edges_conn
-
-    def generate(self):
-        g = nx.erdos_renyi_graph(self.num_nodes, self.edges_conn)
-        return g
-
-class WaxmanGraphGenerator(object):
-    def __init__(self, num_nodes, edges_conn):
-        self.num_nodes = num_nodes
-        self.edges_conn = edges_conn
-
-    def generate(self):
-        g = nx.waxman_graph(self.num_nodes, alpha=0.6)
-        return g
-
-
 class Graph(object):
     def __init__(self, generator, sim):
         self.g = generator.generate()
@@ -76,8 +58,9 @@ class Graph(object):
         random.shuffle(all_nodes)
         idx = math.floor((percent / 100.0) * len(all_nodes))
 
-        for cur_id in all_nodes:
-            if cur_id < idx:
+        for i in range(len(all_nodes)):
+            cur_id = all_nodes[i]
+            if i < idx:
                 self.g.node[cur_id][ATTRNAME] = MALICIOUS
                 self.g.node[cur_id][ATTROBJ] = MaliciousNode(cur_id, self.sim)
             else:
@@ -122,24 +105,32 @@ class Graph(object):
             labels[x[0]] = x[0]
         nx.draw_networkx_labels(G, pos, labels)
         plt.show()
+
+    def print_graph(self):
+        for n in self.g.nodes(data=True):
+            print n[0], n[1][ATTRNAME]
+            print self.g.neighbors(n[0])
         
 class Simulation(object):
-    def __init__(self, graph = None):
+    def __init__(self, generator, graph = None):
         self.sim = Simulator()
-        self.graph = Graph(WaxmanGraphGenerator(100, 20), self.sim)
+        self.graph = Graph(generator, self.sim)
         self.graph.infect_random(10)
 
     def start(self):
+        self.graph.print_graph()
         n = self.graph.get_random_node(HONEST)
         self.sim.schedule_event(0, n.generate_message)
         for n in self.graph.nodes():
             self.sim.schedule_event(0, n[1][ATTROBJ].loop)
         
         self.sim.run(10000)
+        print "Simulation done"
         for n in self.graph.nodes():
             if n[1][ATTRNAME] == MALICIOUS:
                 #print type(n[1][ATTROBJ])
-                print n[1][ATTROBJ].intercepted_messages
-        
-Simulation().start()
-
+                o = n[1][ATTROBJ]
+                print o.node_id, o.intercepted_messages
+              
+ggen = BAGraphGenerator(30, 9)
+Simulation(ggen).start()
