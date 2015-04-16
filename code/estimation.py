@@ -2,13 +2,18 @@
 import random
 
 class Estimator(object):
-    def __init__(self, true_source, adjacency, malicious_nodes, timestamps):
-        self.true_source = true_source
+    def __init__(self, adjacency, malicious_nodes, timestamps):
         self.adjacency = adjacency
         self.malicious_nodes = malicious_nodes
         self.timestamps = timestamps
         
-    def compute_jordan_estimate(self):
+    def estimate_source(self):
+        pass
+        
+class JordanEstimator(Estimator):
+    
+    def estimate_source(self):
+        # Computes the jordan estimate of the source
         jordan_dist = -1
         jordan_center = -1
         for node in range(len(self.adjacency)):
