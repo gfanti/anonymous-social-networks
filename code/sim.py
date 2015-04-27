@@ -49,7 +49,7 @@ class Graph(object):
         self.reset()
 
     def reset(self):
-        for i in xrange(len(self.g.nodes())):
+        for i in self.g.nodes():
             self.g.node[i][ATTRNAME] = HONEST
             self.g.node[i][ATTROBJ] = None
 
@@ -115,7 +115,7 @@ class Simulation(object):
     def __init__(self, generator, graph = None):
         self.sim = Simulator()
         self.graph = Graph(generator, self.sim)
-        self.graph.infect_random(10)
+        self.graph.infect_random(20)
 
     def start(self):
         self.graph.print_graph()
@@ -132,5 +132,8 @@ class Simulation(object):
                 o = n[1][ATTROBJ]
                 print o.node_id, o.intercepted_messages
               
-ggen = BAGraphGenerator(30, 9)
+#ggen = BAGraphGenerator(300, 30)
+#Simulation(ggen).start()
+
+ggen = FacebookDataGenerator(300)
 Simulation(ggen).start()
