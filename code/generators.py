@@ -38,6 +38,7 @@ class BAGraphGenerator(object):
         g = nx.barabasi_albert_graph(self.n, self.m)
         return g
 
+<<<<<<< HEAD
 # Balanced r-tree 
 class BTGraphGenerator(object):
     def __init__(self, r, h):
@@ -55,4 +56,24 @@ class PLTreeGraphGenerator(object):
 
     def generate(self):
         g = nx.random_powerlaw_tree(self.n)
+        return g
+
+class FacebookDataGenerator(object):
+    def __init__(self, n):
+        self.n = n
+        
+    def generate(self):
+        # generate an n-node graph from the facebook data
+        g = nx.Graph()
+        f = open("./data/facebook-links.txt")
+        sampled_nodes = set([])
+        for line in f:
+            l = line.split('\n')[0].split('\t')
+            node_0 = int(l[0])
+            node_1 = int(l[1])
+            if node_0 < self.n and node_1 < self.n:
+                g.add_edge(node_0, node_1)
+                sampled_nodes.add(node_0)
+            if len(sampled_nodes) == self.n:
+                break
         return g

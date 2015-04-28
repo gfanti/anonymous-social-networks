@@ -49,7 +49,7 @@ class Graph(object):
         self.reset()
 
     def reset(self):
-        for i in xrange(len(self.g.nodes())):
+        for i in self.g.nodes():
             self.g.node[i][ATTRNAME] = HONEST
             self.g.node[i][ATTROBJ] = None
 
@@ -133,4 +133,5 @@ class Simulation(object):
                 print o.node_id, o.intercepted_messages
               
 ggen = BTGraphGenerator(2, 4)
+#ggen = FacebookDataGenerator(300)
 Simulation(ggen).start()
