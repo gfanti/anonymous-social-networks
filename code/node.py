@@ -33,6 +33,7 @@ class Node(object):
             return
         for n in self.neighbors:
             latency = NetworkLatency.next(0.5)
+            #print "send:", self.sim.current_time, latency
             # schedule 
             (lambda x: self.sim.schedule_event(latency, lambda: x.queue_message(m)))(n)
         self.past_messages.add(m.id)
@@ -50,12 +51,13 @@ class Node(object):
         self.send(m)
     
     def loop(self):
+        #print "node ", self.node_id, "processing loop"
         if not self.message_queue.empty():
             m = self.message_queue.get_nowait()
             self.proc_message(m)
 
         #print "Scheduling loop event: ", self.node_id
-        self.sim.schedule_event(2, self.loop)
+        self.sim.schedule_event(1, self.loop)
 
 # honest node class
 class HonestNode(Node):

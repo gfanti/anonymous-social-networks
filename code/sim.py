@@ -25,6 +25,7 @@ class Simulator(object):
         
     # event should be a callback function
     def schedule_event(self, time_delta, event):
+        #print "put event", event, "to time", self.current_time + time_delta, time_delta
         self.event_queue.put_nowait((self.current_time + time_delta, event))
 
     def run(self, end_time):
@@ -36,8 +37,8 @@ class Simulator(object):
                 break
 
             (t, event) = self.event_queue.get_nowait()
-            #print t
-            self.current_time = max(t, self.current_time + 1)
+            #self.current_time = max(t, self.current_time + 1)
+            self.current_time = t
             event()
 
 class Graph(object):
@@ -124,7 +125,7 @@ class Simulation(object):
         for n in self.graph.nodes():
             self.sim.schedule_event(0, n[1][ATTROBJ].loop)
         
-        self.sim.run(10000)
+        self.sim.run(100)
         print "Simulation done"
         for n in self.graph.nodes():
             if n[1][ATTRNAME] == MALICIOUS:
