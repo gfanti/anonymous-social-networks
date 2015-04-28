@@ -115,7 +115,7 @@ class Simulation(object):
     def __init__(self, generator, graph = None):
         self.sim = Simulator()
         self.graph = Graph(generator, self.sim)
-        self.graph.infect_random(10)
+        self.graph.infect_random(60)
 
     def start(self):
         self.graph.print_graph()
@@ -132,5 +132,5 @@ class Simulation(object):
                 o = n[1][ATTROBJ]
                 print o.node_id, o.intercepted_messages
               
-ggen = BAGraphGenerator(30, 9)
+ggen = BTGraphGenerator(2, 4)
 Simulation(ggen).start()

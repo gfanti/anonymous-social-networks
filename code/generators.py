@@ -37,3 +37,22 @@ class BAGraphGenerator(object):
     def generate(self):
         g = nx.barabasi_albert_graph(self.n, self.m)
         return g
+
+# Balanced r-tree 
+class BTGraphGenerator(object):
+    def __init__(self, r, h):
+        self.r = r
+        self.h = h
+
+    def generate(self):
+        g = nx.balanced_tree(self.r, self.h)
+        return g        
+        
+# Power-law tree graph  (doesn't work well :( )
+class PLTreeGraphGenerator(object):
+    def __init__(self, n):
+        self.n = n
+
+    def generate(self):
+        g = nx.random_powerlaw_tree(self.n)
+        return g
