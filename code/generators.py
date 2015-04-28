@@ -38,7 +38,6 @@ class BAGraphGenerator(object):
         g = nx.barabasi_albert_graph(self.n, self.m)
         return g
 
-<<<<<<< HEAD
 # Balanced r-tree 
 class BTGraphGenerator(object):
     def __init__(self, r, h):
