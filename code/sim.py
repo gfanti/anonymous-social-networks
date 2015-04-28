@@ -133,6 +133,7 @@ class Simulation(object):
                 o = n[1][ATTROBJ]
                 print o.node_id, o.intercepted_messages
               
-ggen = BTGraphGenerator(2, 4)
+# ggen = BTGraphGenerator(2, 6)
+ggen = BAGraphGenerator(100, 3)
 #ggen = FacebookDataGenerator(300)
 Simulation(ggen).start()

@@ -12,9 +12,9 @@ if __name__ == '__main__':
     rand_distances = []
     num_singular = 0
     trials = 20
-    num_nodes = 16
+    num_nodes = 100
     percent_malicious = 60
-    graph_size = 'N' + str(num_nodes) + '_RT'
+    graph_size = 'N' + str(num_nodes) + '_BA'
     directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
     for i in range(trials):
         parser = Parser( directory + 'output' + str(i+1))
