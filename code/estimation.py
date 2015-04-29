@@ -196,4 +196,57 @@ class JordanEstimator(Estimator):
         jordan_dist = max([distances[j] for j in self.malicious_nodes])
         return jordan_dist
         
-    
+
+class StupidEstimator(Estimator):
+    def draw_graph(self, G, origin):
+        plt.clf()
+        pos = networkx.spring_layout(G)
+
+        nl = [x for x in G.nodes() if x not in self.malicious_nodes]
+        networkx.draw_networkx_nodes(G,pos,nodelist=nl,node_color="#A0CBE2")
+        nl = [x for x in G.nodes() if x in self.malicious_nodes]
+        networkx.draw_networkx_nodes(G,pos,nodelist=nl,node_color="red")
+        nl = [x for x in G.nodes() if x == origin]
+        networkx.draw_networkx_nodes(G,pos,nodelist=nl,node_color="black")
+        nl = [x for x in G.nodes() if x == self.malicious_nodes[ref]]
+        networkx.draw_networkx_nodes(G,pos,nodelist=nl,node_color="green")
+
+        networkx.draw_networkx_edges(G,pos,width=1.0,alpha=0.5)
+        labels = {}
+        for x in G.nodes():
+            if x in self.malicious_nodes:
+                labels[x] = str(self.timestamps[self.malicious_nodes.index(x)])
+        networkx.draw_networkx_labels(G, pos, labels, font_size=16)
+        plt.savefig('fig.png')
+        raw_input()
+
+    def estimate_source(self):
+        # Sums the distance to the unvisited nodes and visited nodes at time_t
+        max_likelihood = None
+        max_indices = []
+        num_spies = len(self.malicious_nodes)
+        # d = np.diff(self.timestamps)
+        #d = np.array([self.timestamps[k+1] - self.timestamps[ref] for k in range(num_spies - 1)])
+        d = np.array([self.timestamps[k+1] for k in range(num_spies - 1)])
+        # First compute the paths between spy 1 and the rest
+
+        G = self.graph
+
+        for node in range(len(self.adjacency)):
+            if node in self.malicious_nodes:
+                continue
+
+            likelihood = 0
+            for m in self.malicious_nodes:
+                distance = len(networkx.shortest_path(G, node, m)) - 1
+                actual_distance = self.timestamps[self.malicious_nodes.index(m)]
+                likelihood += abs(actual_distance - distance)
+
+            if (max_likelihood is None) or (max_likelihood > likelihood):
+                max_likelihood = likelihood
+                max_indices = [node]
+            elif (max_likelihood == likelihood):
+                max_indices.append(node)
+        print 'the candidates are ', max_indices
+        print 'the spies are ', self.malicious_nodes
+        return random.choice(max_indices)

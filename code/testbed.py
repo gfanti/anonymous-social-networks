@@ -52,6 +52,18 @@ if __name__ == '__main__':
         rand_est = random.randint(0,len(adjacency)-1)
         rand_distances.append(distances[rand_est])
         print('Random distance from the true source is :', distances[rand_est])
+
+       # Stupid Estimator                                                                                                                                                                                                                              \
+
+        opt = estimation.StupidEstimator(adjacency, malicious_nodes, timestamps)
+        opt_est = opt.estimate_source()
+        if opt_est == -1:
+            print('NO BUENO')
+            num_singular += 1
+            continue
+        print('Stupid estimate is: ', opt_est)
+        print('True source is :', source)
+        print('Distance from the true source is :', distances[opt_est])
     
     print('The fraction of singular matrices is ', num_singular / float(trials))
     print('Distances are: ', opt_distances)
