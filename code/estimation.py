@@ -11,6 +11,12 @@ class Estimator(object):
         self.adjacency = adjacency
         self.malicious_nodes = malicious_nodes
         self.timestamps = timestamps
+        self.graph = networkx.Graph()
+        
+        for idx in range(len(self.adjacency)):
+            edges = self.adjacency[idx]
+            for e in edges:
+                self.graph.add_edge(idx, e)
         
     def estimate_source(self):
         pass
