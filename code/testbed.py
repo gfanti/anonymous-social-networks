@@ -71,12 +71,12 @@ if __name__ == '__main__':
     print('mean entropy distance is: ', sum(entropy_distances)/float(len(entropy_distances)))
     print('mean random distance is: ', sum(rand_distances)/float(len(rand_distances)))
     
-    write_filename = 'data/' + graph_size + '/results/malicious_' + str(percent_malicious) + '.mat'
-    savemat(write_filename, dict(num_singular = num_singular,
-                                 trials = trials, 
-                                 opt_distances = opt_distances,
-                                 entropy_distances = entropy_distances,
-                                 rand_distances = rand_distances))
+    # write_filename = 'data/' + graph_size + '/results/malicious_' + str(percent_malicious) + '.mat'
+    # savemat(write_filename, dict(num_singular = num_singular,
+                                 # trials = trials, 
+                                 # opt_distances = opt_distances,
+                                 # entropy_distances = entropy_distances,
+                                 # rand_distances = rand_distances))
 
     
     # # Jordan estimator
