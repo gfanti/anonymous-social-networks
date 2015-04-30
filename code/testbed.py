@@ -3,6 +3,7 @@ from spreadparser import Parser
 import estimation
 import random
 from scipy.io import savemat
+import sys
 
 if __name__ == '__main__':
 
@@ -17,7 +18,8 @@ if __name__ == '__main__':
     graph_size = 'N' + str(num_nodes) + '_BA'
     directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
     for i in range(trials):
-        parser = Parser( directory + 'output' + str(i+1))
+        #parser = Parser( directory + 'output' + str(i+1))
+        parser = Parser(sys.argv[1])
         source, adjacency, malicious_nodes, timestamps = parser.parse_file()
         
         e = estimation.Estimator(adjacency, malicious_nodes, timestamps)
@@ -40,21 +42,20 @@ if __name__ == '__main__':
         opt_distances.append(distances[opt_est])
         
         
-        # Entropy estimator
-        entropy = estimation.EntropyEstimator(adjacency, malicious_nodes, timestamps)
-        entropy_est = entropy.estimate_source()
-        # print('Sum distance estimate is: ', entropy_est)
-        # print('True source is :', source)
-        # print('Distance from the true source is :', distances[entropy_est])
-        entropy_distances.append(distances[entropy_est])
+        # # Entropy estimator
+        # entropy = estimation.EntropyEstimator(adjacency, malicious_nodes, timestamps)
+        # entropy_est = entropy.estimate_source()
+        # # print('Sum distance estimate is: ', entropy_est)
+        # # print('True source is :', source)
+        # # print('Distance from the true source is :', distances[entropy_est])
+        # entropy_distances.append(distances[entropy_est])
         
         # Random estimator
         rand_est = random.randint(0,len(adjacency)-1)
         rand_distances.append(distances[rand_est])
         print('Random distance from the true source is :', distances[rand_est])
 
-       # Stupid Estimator                                                                                                                                                                                                                              \
-
+       # Stupid Estimator
         opt = estimation.StupidEstimator(adjacency, malicious_nodes, timestamps)
         opt_est = opt.estimate_source()
         if opt_est == -1:
