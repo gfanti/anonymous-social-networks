@@ -243,9 +243,17 @@ class StupidEstimator(Estimator):
                 continue
 
             likelihood = 0
+            min_time = None
             for m in self.malicious_nodes:
-                distance = len(networkx.shortest_path(G, node, m)) - 1
-                actual_distance = self.timestamps[self.malicious_nodes.index(m)]
+                t = self.timestamps[self.malicious_nodes.index(m)]
+                if min_time is None:
+                    min_time = t
+                elif min_time > t:
+                    min_time = t
+
+            for m in self.malicious_nodes:
+                distance = (len(networkx.shortest_path(G, node, m)) - 1)
+                actual_distance = self.timestamps[self.malicious_nodes.index(m)] - min_time
                 likelihood += abs(actual_distance - distance)
 
             if (max_likelihood is None) or (max_likelihood > likelihood):
