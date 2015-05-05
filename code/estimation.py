@@ -131,7 +131,7 @@ class OptimalEstimator(Estimator):
             for j in range(num_spies-1):
                 if i == j:
                     # Lambda[i,j] = spy_distances[i+1]
-                    Lambda[i,j] = spanning_tree.shortest_path_length(self.malicious_nodes[0],self.malicious_nodes[i+1])
+                    Lambda[i,j] = networkx.shortest_path_length(spanning_tree,self.malicious_nodes[0],self.malicious_nodes[i+1])
                 else:
                     Lambda[i,j] = len(paths[i].intersection(paths[j]))
                     Lambda[j,i] = Lambda[i,j]
