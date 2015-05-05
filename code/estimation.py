@@ -112,11 +112,11 @@ class OptimalEstimator(Estimator):
     def compute_lambda_inv(self, node):
         num_spies = len(self.malicious_nodes)
         Lambda = np.matrix(np.zeros((num_spies-1, num_spies-1)))
-        distances = self.get_distances(self.malicious_nodes[0])
-        spy_distances = [distances[i] for i in self.malicious_nodes]
+        spanning_tree = self.get_spanning_tree(node)
+        # distances = self.get_distances(self.malicious_nodes[0])
+        # spy_distances = [distances[i] for i in self.malicious_nodes]
                 
         paths = []
-        spanning_tree = self.get_spanning_tree(node)
         for i in range(num_spies-1):
             source = self.malicious_nodes[0]
             destination = self.malicious_nodes[i+1]
@@ -130,7 +130,8 @@ class OptimalEstimator(Estimator):
         for i in range(num_spies-1):
             for j in range(num_spies-1):
                 if i == j:
-                    Lambda[i,j] = spy_distances[i+1]
+                    # Lambda[i,j] = spy_distances[i+1]
+                    Lambda[i,j] = spanning_tree.shortest_path_length(self.malicious_nodes[0],self.malicious_nodes[i+1])
                 else:
                     Lambda[i,j] = len(paths[i].intersection(paths[j]))
                     Lambda[j,i] = Lambda[i,j]
