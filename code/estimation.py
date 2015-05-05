@@ -26,7 +26,9 @@ class Estimator(object):
         graph.'''
         visited, queue = set(), [source]
         distances = [0 for i in range(len(self.adjacency))]
-        while queue and (0 in [distances[j] for j in self.malicious_nodes]):
+        counter = 0
+        # while (0 in [distances[j] for j in self.malicious_nodes]):
+        while (0 in distances):
             vertex = queue.pop(0)
             if vertex not in visited:
                 visited.add(vertex)
@@ -34,6 +36,8 @@ class Estimator(object):
                 vertex_dist = distances[vertex]
                 for i in (self.adjacency[vertex] - visited):
                     distances[i] = vertex_dist + 1
+            if not queue:
+                break
         return distances
         
     def get_diameter(self):
@@ -81,7 +85,7 @@ class OptimalEstimator(Estimator):
         # First compute the paths between spy 1 and the rest
                             
         for node in range(len(self.adjacency)):
-            if node in self.malicious_nodes:
+            if (node in self.malicious_nodes) or (self.active_nodes[node] == -1):
                 continue
             sum_distance = 0
             distances = self.get_distances(node)
@@ -101,14 +105,15 @@ class OptimalEstimator(Estimator):
                 max_indices = [node]
             elif (max_likelihood == likelihood):
                 max_indices.append(node)
-        print('the candidates are ', max_indices)
-        print('the spies are ', self.malicious_nodes)
+        # print('the candidates are ', max_indices)
+        # print('the spies are ', self.malicious_nodes)
         return random.choice(max_indices)
         
     def compute_lambda_inv(self, node):
         num_spies = len(self.malicious_nodes)
         Lambda = np.matrix(np.zeros((num_spies-1, num_spies-1)))
-        spy_distances = self.get_distances(self.malicious_nodes[0])
+        distances = self.get_distances(self.malicious_nodes[0])
+        spy_distances = [distances[i] for i in self.malicious_nodes]
                 
         paths = []
         spanning_tree = self.get_spanning_tree(node)
@@ -125,7 +130,7 @@ class OptimalEstimator(Estimator):
         for i in range(num_spies-1):
             for j in range(num_spies-1):
                 if i == j:
-                    Lambda[i,j] = spy_distances[self.malicious_nodes[i+1]]
+                    Lambda[i,j] = spy_distances[i+1]
                 else:
                     Lambda[i,j] = len(paths[i].intersection(paths[j]))
                     Lambda[j,i] = Lambda[i,j]
