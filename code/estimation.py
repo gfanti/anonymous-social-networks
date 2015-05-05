@@ -7,12 +7,18 @@ import heapq
 import networkx
 
 class Estimator(object):
-    def __init__(self, adjacency, malicious_nodes, timestamps):
+    def __init__(self, adjacency, malicious_nodes, timestamps, active_nodes = None):
         self.adjacency = adjacency
         self.malicious_nodes = malicious_nodes
         self.timestamps = timestamps
         self.graph = networkx.Graph()
         
+        # Populate the active nodes
+        if active_nodes is None:
+            self.active_nodes = [1 for i in range(len(adjacency))]
+        else:
+            self.active_nodes = active_nodes
+        # Populate the graph
         for idx in range(len(self.adjacency)):
             edges = self.adjacency[idx]
             for e in edges:

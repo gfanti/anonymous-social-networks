@@ -11,6 +11,7 @@ if __name__ == '__main__':
     opt_distances = []
     entropy_distances = []
     rand_distances = []
+    spy_distances = []
     num_singular = 0
     trials = 20
     num_nodes = 100
@@ -18,8 +19,8 @@ if __name__ == '__main__':
     graph_size = 'N' + str(num_nodes) + '_BA'
     directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
     for i in range(trials):
-        #parser = Parser( directory + 'output' + str(i+1))
-        parser = Parser(sys.argv[1])
+        parser = Parser( directory + 'output' + str(i+1))
+        # parser = Parser(sys.argv[1])
         source, adjacency, malicious_nodes, timestamps = parser.parse_file()
         
         e = estimation.Estimator(adjacency, malicious_nodes, timestamps)
@@ -65,12 +66,25 @@ if __name__ == '__main__':
         print('Stupid estimate is: ', opt_est)
         print('True source is :', source)
         print('Distance from the true source is :', distances[opt_est])
-    
+        
+        # Nearest Spy Estimator
+        spy = estimation.FirstSpyEstimator(adjacency, malicious_nodes, timestamps)
+        spy_est = spy.estimate_source()
+        if spy_est == -1:
+            print('NO BUENO')
+            num_singular += 1
+            continue
+        print('Nearest-spy estimate is: ', spy_est)
+        print('True source is :', source)
+        print('Distance from the true source is :', distances[spy_est])
+        spy_distances.append(distances[opt_est])
+        
     print('The fraction of singular matrices is ', num_singular / float(trials))
     print('Distances are: ', opt_distances)
     print('mean optimal distance is: ', sum(opt_distances)/float(len(opt_distances)))
-    print('mean entropy distance is: ', sum(entropy_distances)/float(len(entropy_distances)))
+    # print('mean entropy distance is: ', sum(entropy_distances)/float(len(entropy_distances)))
     print('mean random distance is: ', sum(rand_distances)/float(len(rand_distances)))
+    print('mean nearest-spy distance is: ', sum(spy_distances)/float(len(spy_distances)))
     
     # write_filename = 'data/' + graph_size + '/results/malicious_' + str(percent_malicious) + '.mat'
     # savemat(write_filename, dict(num_singular = num_singular,
