@@ -27,34 +27,10 @@ class Estimator(object):
     def estimate_source(self):
         pass
         
-    def get_distances(self, source):
-        ''' Returns a vector with the distance from source to every node in the
-        graph.'''
-        visited, queue = set(), [source]
-        distances = [0 for i in range(len(self.adjacency))]
-        counter = 0
-        # while (0 in [distances[j] for j in self.malicious_nodes]):
-        while (0 in distances):
-            vertex = queue.pop(0)
-            if vertex not in visited:
-                visited.add(vertex)
-                queue.extend(self.adjacency[vertex] - visited)
-                vertex_dist = distances[vertex]
-                for i in (self.adjacency[vertex] - visited):
-                    distances[i] = vertex_dist + 1
-            if not queue:
-                break
-        return distances
-        
     def get_diameter(self):
         ''' Returns the diameter of the graph'''
         # computes the diameter of the adjacency matrix
-        max_dist = 0
-        for node in range(len(self.adjacency)):
-            distances = self.get_distances(node)
-            if max(distances) > max_dist:
-                max_dist = max(distances)
-        return max_dist
+        return networkx.diameter(self.graph)
         
     def get_spanning_tree(self, node):
         ''' Returns a networkx spanning tree of the adjacency matrix
@@ -94,9 +70,11 @@ class OptimalEstimator(Estimator):
             if (node in self.malicious_nodes) or (self.active_nodes[node] == -1):
                 continue
             sum_distance = 0
-            distances = self.get_distances(node)
+            # distances = self.get_distances(node)
             # 2 is the mean delay if a message gets forwarded
-            mu = np.array([2*(distances[self.malicious_nodes[k+1]] - distances[self.malicious_nodes[0]]) for k in range(num_spies-1)])
+            # mu = np.array([2*(distances[self.malicious_nodes[k+1]] - distances[self.malicious_nodes[0]]) for k in range(num_spies-1)])
+            mu = np.array([2.0*(networkx.shortest_path_length(self.graph,node, self.malicious_nodes[k+1]) - 
+                                networkx.shortest_path_length(self.graph,node, self.malicious_nodes[0])) for k in range(num_spies-1)])
             mu.shape = (1,len(mu))
             # print('timestamps are ', self.timestamps)
             # print('mu is ', mu, 'd is ',d)
