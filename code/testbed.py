@@ -4,6 +4,7 @@ import estimation
 import random
 from scipy.io import savemat
 import sys
+import networkx
 
 if __name__ == '__main__':
 
@@ -24,7 +25,6 @@ if __name__ == '__main__':
         source, adjacency, malicious_nodes, timestamps = parser.parse_file()
         
         e = estimation.Estimator(adjacency, malicious_nodes, timestamps)
-        distances = e.get_distances(source)
         
         print('the diameter is ', e.get_diameter())
         # exit(0)
@@ -38,9 +38,10 @@ if __name__ == '__main__':
             continue
         print('Optimal estimate is: ', opt_est)
         print('True source is :', source)
-        print('Distance from the true source is :', distances[opt_est])
+        dist_opt = networkx.shortest_path_length(opt.graph,source, opt_est)
+        print('Distance from the true source is :', dist_opt)
         
-        opt_distances.append(distances[opt_est])
+        opt_distances.append(dist_opt)
         
         
         # # Entropy estimator
@@ -53,8 +54,9 @@ if __name__ == '__main__':
         
         # Random estimator
         rand_est = random.randint(0,len(adjacency)-1)
-        rand_distances.append(distances[rand_est])
-        print('Random distance from the true source is :', distances[rand_est])
+        rand_dist = networkx.shortest_path_length(opt.graph,source, rand_est)
+        rand_distances.append(rand_dist)
+        print('Random distance from the true source is :', rand_dist)
 
        # Stupid Estimator
         opt = estimation.StupidEstimator(adjacency, malicious_nodes, timestamps)
@@ -65,7 +67,7 @@ if __name__ == '__main__':
             continue
         print('Stupid estimate is: ', opt_est)
         print('True source is :', source)
-        print('Distance from the true source is :', distances[opt_est])
+        print('Distance from the true source is :', networkx.shortest_path_length(opt.graph,source, opt_est))
         
         # Nearest Spy Estimator
         spy = estimation.FirstSpyEstimator(adjacency, malicious_nodes, timestamps)
@@ -76,8 +78,9 @@ if __name__ == '__main__':
             continue
         print('Nearest-spy estimate is: ', spy_est)
         print('True source is :', source)
-        print('Distance from the true source is :', distances[spy_est])
-        spy_distances.append(distances[opt_est])
+        spy_dist = networkx.shortest_path_length(opt.graph,source, spy_est)
+        print('Distance from the true source is :', spy_dist)
+        spy_distances.append(spy_dist)
         
     print('The fraction of singular matrices is ', num_singular / float(trials))
     print('Distances are: ', opt_distances)
