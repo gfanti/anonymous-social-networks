@@ -133,9 +133,14 @@ class Simulation(object):
                 #print type(n[1][ATTROBJ])
                 o = n[1][ATTROBJ]
                 print o.node_id, o.intercepted_messages
+                
+    def draw(self):
+        self.graph.draw_graph()
               
 # ggen = BTGraphGenerator(2, 6)
-ggen = SameBAGraphGenerator(10, 3)
-#ggen = BAGraphGenerator(300, 30)
+# ggen = SameBAGraphGenerator(10, 3)
+# ggen = BAGraphGenerator(300, 30)
+ggen = BAGraphGenerator(100, 1)
+# ggen = ERGraphGenerator(100, 0.005)
 #ggen = FacebookDataGenerator(300)
 Simulation(ggen).start()

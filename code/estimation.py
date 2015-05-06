@@ -81,8 +81,8 @@ class OptimalEstimator(Estimator):
         # d = np.diff(self.timestamps)
         d = np.array([self.timestamps[k+1] - self.timestamps[0] for k in range(num_spies - 1)])
         # First compute the paths between spy 1 and the rest
-        for i in range(num_spies):
-            print('Spy ',self.malicious_nodes[i],': ', self.timestamps[i])
+        # for i in range(num_spies):
+            # print('Spy ',self.malicious_nodes[i],': ', self.timestamps[i])
         # print('timestamps are ', self.timestamps)
         # count = 0
         for node in range(len(self.adjacency)):
@@ -116,11 +116,17 @@ class OptimalEstimator(Estimator):
             # print('mu is ', mu, 'd is ',d)
             Lambda_inv = self.compute_lambda_inv(node)
             # subtract distance from nodes that have seen the message already
-            d_norm = np.array([item_d - 0.5*item_mu for (item_d, item_mu) in zip(d, mu)])
-            d_norm = np.transpose(d_norm)
-            likelihood = float(np.dot(np.dot(mu, Lambda_inv), d_norm))
+            # d_norm = np.array([item_d - 0.5*item_mu for (item_d, item_mu) in zip(d, mu)])
+            # d_norm = np.array([item_d - item_mu for (item_d, item_mu) in zip(d, mu)])
+            # d_norm = np.transpose(d_norm)
+            d_norm = []
+            for idx in range(len(d)):
+                d_norm.append(d[idx] - 0.5 * mu[0,idx])
+            d_norm = np.transpose(np.array(d_norm))
+            # likelihood = float(np.dot(np.dot(mu, Lambda_inv), d_norm))
+            likelihood = -0.5 * float(np.dot(np.dot(np.transpose(d_norm), Lambda_inv), d_norm))
             
-            print('Node ', node,': likelihood is ', likelihood)
+            # print('Node ', node,': likelihood is ', likelihood)
             if (max_likelihood is None) or (max_likelihood < likelihood):
                 max_likelihood = likelihood
                 max_indices = [node]
@@ -172,7 +178,7 @@ class FirstSpyEstimator(Estimator):
     def estimate_source(self):
         # Picks a random neighbor of the first spy to receive the message
         # print(self.timestamps)
-        print('timestamps 0',self.timestamps[0],self.malicious_nodes[0],'adj:',self.adjacency[self.malicious_nodes[0]])
+        # print('timestamps 0',self.timestamps[0],self.malicious_nodes[0],'adj:',self.adjacency[self.malicious_nodes[0]])
         estimate = random.randint(0, len(self.adjacency)-1)
         for spy in self.malicious_nodes:
             options = [option for option in self.adjacency[spy] if option not in self.malicious_nodes]
