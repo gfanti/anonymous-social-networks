@@ -40,7 +40,7 @@ class Parser(object):
                 break
             line = line.split()
             line = [item.strip('[(,)]') for item in line]
-            timestamps.append(int(line[1]))
+            timestamps.append(float(line[1]))
             source = int(line[2])
         
         return source, adjacency, malicious_nodes, timestamps

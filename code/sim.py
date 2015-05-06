@@ -116,7 +116,7 @@ class Simulation(object):
     def __init__(self, generator, graph = None):
         self.sim = Simulator()
         self.graph = Graph(generator, self.sim)
-        self.graph.infect_random(60)
+        self.graph.infect_random(90)
 
     def start(self):
         self.graph.print_graph()

@@ -134,6 +134,8 @@ class OptimalEstimator(Estimator):
 class FirstSpyEstimator(Estimator):
     def estimate_source(self):
         # Picks a random neighbor of the first spy to receive the message
+        # print(self.timestamps)
+        print('timestamps 0',self.timestamps[0],self.malicious_nodes[0],'adj:',self.adjacency[self.malicious_nodes[0]])
         estimate = random.randint(0, len(self.adjacency)-1)
         for spy in self.malicious_nodes:
             options = [option for option in self.adjacency[spy] if option not in self.malicious_nodes]
@@ -262,6 +264,6 @@ class StupidEstimator(Estimator):
                 max_indices = [node]
             elif (max_likelihood == likelihood):
                 max_indices.append(node)
-        print 'the candidates are ', max_indices
-        print 'the spies are ', self.malicious_nodes
+        # print 'the candidates are ', max_indices
+        # print 'the spies are ', self.malicious_nodes
         return random.choice(max_indices)

@@ -2,5 +2,6 @@
 
 for i in {1..100}
 do
-    python sim.py > data/N100_BA/malicious_60/output$i
+    j=$((100+$i))
+    python sim.py > data/N100_BA/malicious_90/output$j
 done
