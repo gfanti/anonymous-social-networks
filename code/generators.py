@@ -38,6 +38,16 @@ class BAGraphGenerator(object):
         g = nx.barabasi_albert_graph(self.n, self.m)
         return g
 
+# Barabasi-Albert graph
+class SameBAGraphGenerator(object):
+    def __init__(self, n, m):
+        self.n = n
+        self.m = m
+
+    def generate(self):
+        g = nx.barabasi_albert_graph(self.n, self.m, 123)
+        return g
+
 # Balanced r-tree 
 class BTGraphGenerator(object):
     def __init__(self, r, h):

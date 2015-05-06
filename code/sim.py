@@ -89,6 +89,7 @@ class Graph(object):
                 if self.g.node[n][ATTRNAME] == t:
                     nodes.append(self.g.node[n])
 
+        random.seed(None)
         ret = random.sample(nodes, 1)[0]
         return ret[ATTROBJ]
 
@@ -134,6 +135,7 @@ class Simulation(object):
                 print o.node_id, o.intercepted_messages
               
 # ggen = BTGraphGenerator(2, 6)
-ggen = BAGraphGenerator(100, 3)
+ggen = SameBAGraphGenerator(10, 3)
+#ggen = BAGraphGenerator(300, 30)
 #ggen = FacebookDataGenerator(300)
 Simulation(ggen).start()
