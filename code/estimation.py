@@ -124,7 +124,8 @@ class OptimalEstimator(Estimator):
                 d_norm.append(d[idx] - 0.5 * mu[0,idx])
             d_norm = np.transpose(np.array(d_norm))
             # likelihood = float(np.dot(np.dot(mu, Lambda_inv), d_norm))
-            likelihood = -0.5 * float(np.dot(np.dot(np.transpose(d_norm), Lambda_inv), d_norm)) / pow(np.linalg.det(Lambda), 0.5)
+            likelihood = np.exp(-0.5 * np.dot(np.dot(Lambda_inv, d_norm), d_norm)) / pow(np.linalg.det(Lambda), 0.5)
+            
             
             # print('Node ', node,': likelihood is ', likelihood)
             if (max_likelihood is None) or (max_likelihood < likelihood):
