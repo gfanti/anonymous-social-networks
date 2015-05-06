@@ -37,6 +37,16 @@ class BAGraphGenerator(object):
     def generate(self):
         g = nx.barabasi_albert_graph(self.n, self.m)
         return g
+        
+# Barabasi-Albert graph
+class ERGraphGenerator(object):
+    def __init__(self, n, p):
+        self.n = n
+        self.p = p
+
+    def generate(self):
+        g = nx.erdos_renyi_graph(self.n, self.p)
+        return g
 
 # Barabasi-Albert graph
 class SameBAGraphGenerator(object):
