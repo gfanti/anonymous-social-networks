@@ -311,3 +311,117 @@ class StupidEstimator(Estimator):
         # print 'the candidates are ', max_indices
         # print 'the spies are ', self.malicious_nodes
         return random.choice(max_indices)
+
+class MultiMessageOptimalEstimator(Estimator):
+    def __init__(self, adjacency, malicious_nodes, all_timestamps, active_nodes = None):
+        self.adjacency = adjacency
+        self.malicious_nodes = malicious_nodes
+        self.graph = networkx.Graph()
+        
+        # Populate the active nodes
+        if active_nodes is None:
+            self.active_nodes = [1 for i in range(len(adjacency))]
+        else:
+            self.active_nodes = active_nodes
+        # Populate the graph
+        for idx in range(len(self.adjacency)):
+            edges = self.adjacency[idx]
+            for e in edges:
+                self.graph.add_edge(idx, e)
+
+        self.all_timestamps = all_timestamps
+        self.likelihoods = {}
+
+    def estimate_source(self):
+        for timestamps in self.all_timestamps:
+            self.estimate_source_(timestamps)
+
+        max_likelihood = None
+        max_node = None
+        for n, l in self.likelihoods.iteritems():
+            print n, l, sum(l)
+            if max_likelihood is None:
+                max_likelihood = sum(l)
+                max_node = n
+            elif max_likelihood < sum(l):
+                max_likelihood = sum(l)
+                max_node = n
+
+        return n
+        
+    def estimate_source_(self, timestamps):
+        # Sums the distance to the unvisited nodes and visited nodes at time_t
+        max_likelihood = None
+        max_indices = []
+        num_spies = len(self.malicious_nodes)
+        # d = np.diff(self.timestamps)
+        d = np.array([timestamps[k+1] - timestamps[0] for k in range(num_spies - 1)])
+        # First compute the paths between spy 1 and the rest
+                            
+        for node in range(len(self.adjacency)):
+            if (node in self.malicious_nodes) or (self.active_nodes[node] == -1):
+                continue
+            sum_distance = 0
+            # distances = self.get_distances(node)
+            # 2 is the mean delay if a message gets forwarded
+            # mu = np.array([2*(distances[self.malicious_nodes[k+1]] - distances[self.malicious_nodes[0]]) for k in range(num_spies-1)])
+            mu = np.array([2.0*(networkx.shortest_path_length(self.graph,node, self.malicious_nodes[k+1]) - 
+                                networkx.shortest_path_length(self.graph,node, self.malicious_nodes[0])) for k in range(num_spies-1)])
+            mu.shape = (1,len(mu))
+            # print('timestamps are ', self.timestamps)
+            # print('mu is ', mu, 'd is ',d)
+            Lambda_inv = self.compute_lambda_inv(node)
+            # subtract distance from nodes that have seen the message already
+            d_norm = np.array([item_d - 0.5*item_mu for (item_d, item_mu) in zip(d, mu)])
+            d_norm = np.transpose(d_norm)
+            likelihood = float(np.dot(np.dot(mu, Lambda_inv), d_norm))
+            # print('Node ', node,': likelihood is ', likelihood)
+            if node not in self.likelihoods:
+                self.likelihoods[node] = []
+            self.likelihoods[node].append(likelihood)
+            if (max_likelihood is None) or (max_likelihood < likelihood):
+                max_likelihood = likelihood
+                max_indices = [node]
+            elif (max_likelihood == likelihood):
+                max_indices.append(node)
+        # print('the candidates are ', max_indices)
+        # print('the spies are ', self.malicious_nodes)
+        return random.choice(max_indices)
+        
+    def compute_lambda_inv(self, node):
+        num_spies = len(self.malicious_nodes)
+        Lambda = np.matrix(np.zeros((num_spies-1, num_spies-1)))
+        spanning_tree = self.get_spanning_tree(node)
+        # distances = self.get_distances(self.malicious_nodes[0])
+        # spy_distances = [distances[i] for i in self.malicious_nodes]
+                
+        paths = []
+        for i in range(num_spies-1):
+            source = self.malicious_nodes[0]
+            destination = self.malicious_nodes[i+1]
+            # path = self.dijkstra(source, destination, spanning_tree)
+            path = networkx.shortest_path(spanning_tree, source, destination)
+            path.pop(0)
+            # print('path is ', path)
+            # print('original adjacency is ', self.adjacency)
+            # print('dijstra result from', source, ' to ', destination, ' gives ', path)
+            paths.append(set(path))
+        for i in range(num_spies-1):
+            for j in range(num_spies-1):
+                if i == j:
+                    # Lambda[i,j] = spy_distances[i+1]
+                    Lambda[i,j] = networkx.shortest_path_length(spanning_tree,self.malicious_nodes[0],self.malicious_nodes[i+1])
+                else:
+                    Lambda[i,j] = len(paths[i].intersection(paths[j]))
+                    Lambda[j,i] = Lambda[i,j]
+        # print('Adjacency: ', self.adjacency)
+        # print('Spies: ', self.malicious_nodes)
+        # print('Spy_times: ', self.timestamps)
+        # print('Lambda: ', Lambda)
+        try:
+            Lambda_inv = inv(Lambda)
+        except:
+            # print('matrix was not invertible.')
+            # return max_index
+            Lambda_inv = pinv(Lambda)
+        return Lambda_inv

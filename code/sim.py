@@ -41,6 +41,10 @@ class Simulator(object):
             self.current_time = t
             event()
 
+    def reset(self):
+        self.current_time = 0
+        self.event_queue = Queue.PriorityQueue()
+
 class Graph(object):
     def __init__(self, generator, sim):
         self.g = generator.generate()
@@ -119,10 +123,8 @@ class Simulation(object):
         self.graph = Graph(generator, self.sim)
         self.graph.infect_random(90)
 
-    def start(self):
-        self.graph.print_graph()
-        n = self.graph.get_random_node(HONEST)
-        self.sim.schedule_event(0, n.generate_message)
+    def start_(self, source):
+        self.sim.schedule_event(0, source.generate_message)
         for n in self.graph.nodes():
             self.sim.schedule_event(0, n[1][ATTROBJ].loop)
         
@@ -133,14 +135,25 @@ class Simulation(object):
                 #print type(n[1][ATTROBJ])
                 o = n[1][ATTROBJ]
                 print o.node_id, o.intercepted_messages
-                
-    def draw(self):
-        self.graph.draw_graph()
+
+    def start(self, rounds = 1):
+        n = self.graph.get_random_node(HONEST)
+        self.graph.print_graph()
+        
+        for r in xrange(rounds):
+            self.start_(n)
+            self.reset()
+            
+    def reset(self):
+        self.sim.reset()
+        for n in self.graph.nodes():
+            if n[1][ATTRNAME] == MALICIOUS:
+                #print type(n[1][ATTROBJ])
+                o = n[1][ATTROBJ]
+                o.intercepted_messages = []
               
 # ggen = BTGraphGenerator(2, 6)
-# ggen = SameBAGraphGenerator(10, 3)
-# ggen = BAGraphGenerator(300, 30)
 ggen = BAGraphGenerator(100, 1)
-# ggen = ERGraphGenerator(100, 0.005)
+#ggen = BAGraphGenerator(300, 30)
 #ggen = FacebookDataGenerator(300)
-Simulation(ggen).start()
+Simulation(ggen).start(100)
