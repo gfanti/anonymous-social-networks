@@ -7,7 +7,8 @@ import numpy as np
 class NetworkLatency(object):
     @classmethod
     def next(cls, p):
-        return np.random.geometric(p, 1)[0]
+        return np.random.normal(10, 1)
+        #return np.random.geometric(p, 1)[0]
 
 class Message(object):
     def __init__(self, source, content):
@@ -33,9 +34,10 @@ class Node(object):
             return
         for n in self.neighbors:
             latency = NetworkLatency.next(0.5)
-            #print "send:", self.sim.current_time, latency
+            print "send:", self.sim.current_time, latency
             # schedule 
-            (lambda x: self.sim.schedule_event(latency, lambda: x.queue_message(m)))(n)
+            #(lambda x: self.sim.schedule_event(latency, lambda: x.queue_message(m)))(n)
+            (lambda x: self.sim.schedule_event(latency, lambda: x.proc_message(m)))(n)
         self.past_messages.add(m.id)
 
     def queue_message(self, m):
