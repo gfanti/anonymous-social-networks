@@ -34,7 +34,7 @@ class Node(object):
             return
         for n in self.neighbors:
             latency = NetworkLatency.next(0.5)
-            print "send:", self.sim.current_time, latency
+            #print "send:", self.sim.current_time, latency
             # schedule 
             #(lambda x: self.sim.schedule_event(latency, lambda: x.queue_message(m)))(n)
             (lambda x: self.sim.schedule_event(latency, lambda: x.proc_message(m)))(n)
