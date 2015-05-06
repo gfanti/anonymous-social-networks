@@ -7,7 +7,7 @@ import numpy as np
 class NetworkLatency(object):
     @classmethod
     def next(cls, p):
-        return np.random.normal(10, 1)
+        return np.random.normal(2, 0.5)
         #return np.random.geometric(p, 1)[0]
 
 class Message(object):
