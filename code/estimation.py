@@ -114,7 +114,7 @@ class OptimalEstimator(Estimator):
                                 nx.shortest_path_length(self.graph, node, self.malicious_nodes[0])) for k in range(num_spies-1)])
             mu.shape = (1,len(mu))
             # print('mu is ', mu, 'd is ',d)
-            Lambda_inv = self.compute_lambda_inv(node)
+            Lambda_inv, Lambda = self.compute_lambda_inv(node)
             # subtract distance from nodes that have seen the message already
             # d_norm = np.array([item_d - 0.5*item_mu for (item_d, item_mu) in zip(d, mu)])
             # d_norm = np.array([item_d - item_mu for (item_d, item_mu) in zip(d, mu)])
@@ -124,7 +124,7 @@ class OptimalEstimator(Estimator):
                 d_norm.append(d[idx] - 0.5 * mu[0,idx])
             d_norm = np.transpose(np.array(d_norm))
             # likelihood = float(np.dot(np.dot(mu, Lambda_inv), d_norm))
-            likelihood = -0.5 * float(np.dot(np.dot(np.transpose(d_norm), Lambda_inv), d_norm))
+            likelihood = -0.5 * float(np.dot(np.dot(np.transpose(d_norm), Lambda_inv), d_norm)) / pow(np.linalg.det(Lambda), 0.5)
             
             # print('Node ', node,': likelihood is ', likelihood)
             if (max_likelihood is None) or (max_likelihood < likelihood):
@@ -172,7 +172,7 @@ class OptimalEstimator(Estimator):
             # print('matrix was not invertible.')
             # return max_index
             Lambda_inv = pinv(Lambda)
-        return Lambda_inv
+        return Lambda_inv, Lambda
 
 class FirstSpyEstimator(Estimator):
     def estimate_source(self):
