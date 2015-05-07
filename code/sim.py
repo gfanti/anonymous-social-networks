@@ -121,12 +121,12 @@ class Simulation(object):
     def __init__(self, generator, graph = None):
         self.sim = Simulator()
         self.graph = Graph(generator, self.sim)
-        self.graph.infect_random(90)
+        self.graph.infect_random(40)
 
     def start_(self, source):
         self.sim.schedule_event(0, source.generate_message)
-        for n in self.graph.nodes():
-            self.sim.schedule_event(0, n[1][ATTROBJ].loop)
+        # for n in self.graph.nodes():
+        #     self.sim.schedule_event(0, n[1][ATTROBJ].loop)
         
         self.sim.run(100)
         print "Simulation done"
@@ -156,4 +156,4 @@ class Simulation(object):
 ggen = BAGraphGenerator(100, 1)
 #ggen = BAGraphGenerator(300, 30)
 #ggen = FacebookDataGenerator(300)
-Simulation(ggen).start(100)
+Simulation(ggen).start(1)

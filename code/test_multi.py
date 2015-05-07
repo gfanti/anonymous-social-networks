@@ -1,5 +1,5 @@
 #testbed
-from spreadparser import Parser
+from spreadparser import Parser, MultiMessageParser
 import estimation
 import random
 from scipy.io import savemat
@@ -7,8 +7,6 @@ import sys
 import networkx
 
 if __name__ == '__main__':
-
-
     opt_distances = []
     pd_opt = 0
     pd_rand = 0
@@ -17,15 +15,15 @@ if __name__ == '__main__':
     rand_distances = []
     spy_distances = []
     num_singular = 0
-    trials = 100
+    trials = int(sys.argv[2])
     num_nodes = 100
     percent_malicious = 90
     graph_size = 'N' + str(num_nodes) + '_BA'
     directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
     for i in range(trials):
-        #parser = Parser( directory + 'output' + str(i+1))
-        parser = Parser(sys.argv[1] + '/out' + str(i+1))
-        source, adjacency, malicious_nodes, timestamps = parser.parse_file()
+        parser = MultiMessageParser(sys.argv[1] + '/out' + str(i+1))
+        source, adjacency, malicious_nodes, all_timestamps = parser.parse_file()
+        timestamps = all_timestamps[0]
         
         e = estimation.Estimator(adjacency, malicious_nodes, timestamps)
         
@@ -33,8 +31,11 @@ if __name__ == '__main__':
         # exit(0)
         
         # Optimal estimator
+
+        # Optimal estimator
         print('malicious nodes are',malicious_nodes)
-        opt = estimation.OptimalEstimator(adjacency, malicious_nodes, timestamps)
+        opt = estimation.MultiMessageOptimalEstimator(adjacency, malicious_nodes, all_timestamps[0:int(sys.argv[3])])
+        #opt = estimation.OptimalEstimator(adjacency, malicious_nodes, all_timestamps[0])
         opt_est = opt.estimate_source()
         if opt_est == -1:
             print('NO BUENO')
@@ -44,8 +45,21 @@ if __name__ == '__main__':
         if dist_opt == 0:
             pd_opt += 1
         print('Optimal estimate is: ', opt_est,'True source is :', source, 'Distance from the true source is :', dist_opt)
-        
         opt_distances.append(dist_opt)
+        
+        # opt_distances.append(dist_opt)
+        # print('malicious nodes are',malicious_nodes)
+        # opt = estimation.MultiMessageOptimalEstimator(adjacency, malicious_nodes, all_timestamps[0:int(sys.argv[3])])
+        # opt_est = opt.estimate_source()
+        # if opt_est == -1:
+        #     print('NO BUENO')
+        #     num_singular += 1
+        #     continue
+        # dist_opt = networkx.shortest_path_length(opt.graph,source, opt_est)
+        # if dist_opt == 0:
+        #     pd_opt += 1
+        # print('Optimal estimate is: ', opt_est,'True source is :', source, 'Distance from the true source is :', dist_opt)
+        
         
         
         # # Entropy estimator
@@ -57,6 +71,7 @@ if __name__ == '__main__':
         # entropy_distances.append(distances[entropy_est])
         
         # Random estimator
+        random.seed()
         rand_est = random.choice([i for i in range(len(adjacency)) if i not in malicious_nodes])
         rand_dist = networkx.shortest_path_length(opt.graph,source, rand_est)
         rand_distances.append(rand_dist)
@@ -75,6 +90,19 @@ if __name__ == '__main__':
         # print('True source is :', source)
         # print('Distance from the true source is :', networkx.shortest_path_length(opt.graph,source, opt_est))
         
+        # # Nearest Spy Estimator
+        # spy = estimation.FirstSpyEstimator(adjacency, malicious_nodes, timestamps)
+        # spy_est = spy.estimate_source()
+        # if spy_est == -1:
+        #     print('NO BUENO')
+        #     num_singular += 1
+        #     continue
+        # spy_dist = networkx.shortest_path_length(opt.graph,source, spy_est)
+        # print('Nearest-spy estimate is: ', spy_est,'True source is :', source,'Distance from the true source is :', spy_dist)
+        # spy_distances.append(spy_dist)
+        # if spy_dist == 0:
+        #     pd_spy += 1
+
         # Nearest Spy Estimator
         spy = estimation.FirstSpyEstimator(adjacency, malicious_nodes, timestamps)
         spy_est = spy.estimate_source()
@@ -87,7 +115,7 @@ if __name__ == '__main__':
         spy_distances.append(spy_dist)
         if spy_dist == 0:
             pd_spy += 1
-        
+
     # print('The fraction of singular matrices is ', num_singular / float(trials))
     # print('Distances are: ', opt_distances)
     print('mean optimal distance is: ', sum(opt_distances)/float(len(opt_distances)))
