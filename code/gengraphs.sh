@@ -1,7 +1,7 @@
 #!/bin/bash
 
-for i in {1..100}
+for i in {1..2}
 do
-    j=$((0+$i))
-    python sim.py > data/N100_BA/malicious_40/output$j
+    j=$((100+$i))
+    python sim.py 30 > data/N100_BA/malicious_30/output$j
 done

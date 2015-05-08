@@ -23,18 +23,17 @@ if __name__ == '__main__':
     graph_size = 'N' + str(num_nodes) + '_BA'
     directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
     for i in range(trials):
-        #parser = Parser( directory + 'output' + str(i+1))
-        parser = Parser(sys.argv[1] + '/out' + str(i+1))
-        source, adjacency, malicious_nodes, timestamps = parser.parse_file()
+        parser = Parser( directory + 'output' + str(i+1))
+        # parser = Parser(sys.argv[1] + '/out' + str(i+1))
+        source, adjacency, malicious_nodes, timestamps, infectors = parser.parse_file()
         
-        e = estimation.Estimator(adjacency, malicious_nodes, timestamps)
+        e = estimation.Estimator(adjacency, malicious_nodes, timestamps, infectors)
         
         print('the diameter is ', e.get_diameter())
         # exit(0)
         
         # Optimal estimator
-        print('malicious nodes are',malicious_nodes)
-        opt = estimation.OptimalEstimator(adjacency, malicious_nodes, timestamps)
+        opt = estimation.OptimalEstimator(adjacency, malicious_nodes, timestamps, infectors)
         opt_est = opt.estimate_source()
         if opt_est == -1:
             print('NO BUENO')

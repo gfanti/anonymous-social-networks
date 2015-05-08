@@ -34,6 +34,7 @@ class Parser(object):
             
         # Now parse the times at which malicious nodes got the message
         timestamps = []
+        infectors = []
         while True:
             line = f.readline()
             if not line:
@@ -42,8 +43,8 @@ class Parser(object):
             line = [item.strip('[(,)]') for item in line]
             timestamps.append(float(line[1]))
             source = int(line[2])
-        
-        return source, adjacency, malicious_nodes, timestamps
+            infectors.append(int(line[3]))
+        return source, adjacency, malicious_nodes, timestamps, infectors
 
 class MultiMessageParser(object):
 

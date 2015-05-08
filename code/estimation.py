@@ -9,10 +9,11 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 class Estimator(object):
-    def __init__(self, adjacency, malicious_nodes, timestamps, active_nodes = None):
+    def __init__(self, adjacency, malicious_nodes, timestamps, infectors = None, active_nodes = None):
         self.adjacency = adjacency
         self.malicious_nodes = malicious_nodes
         self.timestamps = timestamps
+        self.infectors = infectors
         self.graph = nx.Graph()
         
         # Populate the active nodes
@@ -48,56 +49,110 @@ class Estimator(object):
         nx.draw_networkx_labels(G, pos, labels)
         plt.show()
         
-    def get_spanning_tree(self, node):
+    def get_spanning_tree(self, node, use_infectors = False):
         ''' Returns a networkx spanning tree of the adjacency matrix
         rooted at node'''
-        num_nodes = len(self.adjacency)
-        # sp_adjacency = [set() for i in range(num_nodes)]
+        
         G = nx.Graph()
-        for vertex in range(len(self.adjacency)):
-            G.add_node(vertex)
-        nodes = set([i for i in range(num_nodes)])
-        visited, queue = set(), [node]
-        while queue and nodes:
-            vertex = queue.pop(0)
-            if vertex not in visited:
-                nodes.remove(vertex)
-                visited.add(vertex)
-                queue.extend(self.adjacency[vertex] - visited)
-                # Fix the adjacency matrix here!
-                for i in (self.adjacency[vertex] - visited):
-                    # sp_adjacency[vertex].add(i)
-                    # sp_adjacency[i].add(vertex)
-                    G.add_edge(vertex, i)
-        # return sp_adjacency
-
-        G = nx.bfs_tree(self.graph, node).to_undirected()
+        
+        
+        if use_infectors:
+            G = nx.bfs_tree(self.graph, node)
+            num_spies = len(self.malicious_nodes)
+            # G_old = self.graph
+            # for u,v in G_old.edges():
+                # G_old[u][v]['weight']=1.0
+            # for neighbor in self.adjacency[node]:
+                # G_old[node][neighbor]['weight']=-20
+            # for spy_idx in range(num_spies):
+                # try:
+                    # G_old[self.infectors[spy_idx]][self.malicious_nodes[spy_idx]]['weight']=-20
+                # except:
+                    # print('No connection from ',self.infectors[spy_idx],' to ', self.malicious_nodes[spy_idx])
+                    # print('Neighbors of ', self.infectors[spy_idx], ":", self.adjacency[self.infectors[spy_idx]])
+                    # print(self.infectors)
+                    # print(self.malicious_nodes)
+            # G = nx.minimum_spanning_tree(G_old)
+            
+            for spy_idx in range(num_spies):
+                spy = self.malicious_nodes[spy_idx]
+                # print('spy: ',spy,'adjacency',self.adjacency[spy],self.infectors[spy_idx])
+                in_edge = G.in_edges(spy)[0][0]
+                if in_edge != self.infectors[spy_idx]:
+                    G.remove_edge(in_edge, spy)
+                    G.add_edge(self.infectors[spy_idx],spy)
+            G = G.to_undirected()
+            # num_nodes = len(self.adjacency)
+            # for vertex in range(num_nodes):
+                # G.add_node(vertex)
+            # # sp_adjacency = [set() for i in range(num_nodes)]
+            
+            # nodes = set([i for i in range(num_nodes)])
+            # visited, queue = set(), [node]
+            # while queue and nodes:
+                # vertex = queue.pop(0)
+                # if vertex not in visited:
+                    # nodes.remove(vertex)
+                    # visited.add(vertex)
+                    # print('adjacency of ', vertex, ' is ', self.adjacency[vertex], 'malicious:  ',[i in self.malicious_nodes for i in self.adjacency[vertex]])
+                    # print('list of candidates is ', [i for i in self.adjacency[vertex] - visited if 
+                        # ((i not in self.malicious_nodes) or (self.infectors[self.malicious_nodes.index(i)] == vertex))])
+                    # # print([(i,j) for (i,j) in zip(self.infectors,self.malicious_nodes)])
+                    # newnodes = [i for i in self.adjacency[vertex] - visited if 
+                        # ((i not in self.malicious_nodes) or (self.infectors[self.malicious_nodes.index(i)] == vertex))]
+                    # queue.extend(newnodes)
+                    # # Fix the adjacency matrix here!
+                    # for i in (newnodes):
+                        # # sp_adjacency[vertex].add(i)
+                        # # sp_adjacency[i].add(vertex)
+                        # # if use_infectors and (i in self.malicious_nodes) and (self.infectors[self.malicious_nodes.index(i)] != vertex):
+                            # # continue
+                        # G.add_edge(vertex, i)
+                    # print('Queue', queue, 'nodes',nodes)
+            # # return sp_adjacency
+        else:
+            G = nx.bfs_tree(self.graph, node).to_undirected()
+        if not nx.is_connected(G):
+            return None
+        # print([(i,j) for (i,j) in zip(self.infectors,self.malicious_nodes)])
+        # # print('connected?',nx.is_connected(G))
+        # pos = nx.spring_layout(G)
+        # nl = [x for x in G.nodes() if x not in self.malicious_nodes]
+        # nx.draw_networkx_nodes(G,pos,nodelist=nl,node_color="#A0CBE2")
+        # nl = [x for x in G.nodes() if x in self.malicious_nodes]
+        # nx.draw_networkx_nodes(G,pos,nodelist=nl,node_color="red")
+        # nx.draw_networkx_edges(G,pos,width=1.0,alpha=0.5)
+        # labels = {}
+        # for x in G.nodes(data=True):
+            # labels[x[0]] = x[0]
+        # nx.draw_networkx_labels(G, pos, labels)
+        # plt.show()
         return G
                 
 class OptimalEstimator(Estimator):
-    def __init__(self, adjacency, malicious_nodes, timestamps, active_nodes = None):
-        super(OptimalEstimator, self).__init__(adjacency, malicious_nodes, timestamps, active_nodes)
+    def __init__(self, adjacency, malicious_nodes, timestamps, infectors, active_nodes = None):
+        super(OptimalEstimator, self).__init__(adjacency, malicious_nodes, timestamps, infectors, active_nodes)
 
-        min_ = None
-        for i in range(len(self.malicious_nodes)):
-            r = self.graph.neighbors(self.malicious_nodes[i])
-            r = len(r)
-            #r = timestamps[i]
-            if min_ is None:
-                min_ = r
-                self.ref = i
-            elif min_ > r:
-                min_ = r
-                self.ref = i
+        # min_ = None
+        # for i in range(len(self.malicious_nodes)):
+            # r = self.graph.neighbors(self.malicious_nodes[i])
+            # r = len(r)
+            # #r = timestamps[i]
+            # if min_ is None:
+                # min_ = r
+                # self.ref = i
+            # elif min_ > r:
+                # min_ = r
+                # self.ref = i
 
-        temp = timestamps[0]
-        timestamps[0] = timestamps[self.ref]
-        timestamps[self.ref] = temp
+        # temp = timestamps[0]
+        # timestamps[0] = timestamps[self.ref]
+        # timestamps[self.ref] = temp
 
-        temp = self.malicious_nodes[0]
-        self.malicious_nodes[0] = self.malicious_nodes[self.ref]
-        self.malicious_nodes[self.ref] = temp
-        #self.ref = 0
+        # temp = self.malicious_nodes[0]
+        # self.malicious_nodes[0] = self.malicious_nodes[self.ref]
+        # self.malicious_nodes[self.ref] = temp
+        # #self.ref = 0
 
     def estimate_source(self):
         # Sums the distance to the unvisited nodes and visited nodes at time_t
@@ -114,7 +169,9 @@ class OptimalEstimator(Estimator):
         for node in range(len(self.adjacency)):
             if (node in self.malicious_nodes) or (self.active_nodes[node] == -1):
                 continue
-            
+            spanning_tree = self.get_spanning_tree(node, use_infectors=True)
+            if spanning_tree is None:
+                continue
             # spanning_tree = self.get_spanning_tree(node)
             # inconsistent = False
             # for sp_node in self.malicious_nodes:
@@ -136,11 +193,15 @@ class OptimalEstimator(Estimator):
             # distances = self.get_distances(node)
             # 2 is the mean delay if a message gets forwarded
             # mu = np.array([2*(distances[self.malicious_nodes[k+1]] - distances[self.malicious_nodes[0]]) for k in range(num_spies-1)])
-            mu = np.array([2.0*(nx.shortest_path_length(self.graph, node, self.malicious_nodes[k+1]) - 
-                                nx.shortest_path_length(self.graph, node, self.malicious_nodes[0])) for k in range(num_spies-1)])
+            # mu = np.array([2.0*(nx.shortest_path_length(self.graph, node, self.malicious_nodes[k+1]) - 
+                                # nx.shortest_path_length(self.graph, node, self.malicious_nodes[0])) for k in range(num_spies-1)])
+                                
+            mu = np.array([2.0*(nx.shortest_path_length(spanning_tree, node, self.malicious_nodes[k+1]) - 
+                                nx.shortest_path_length(spanning_tree, node, self.malicious_nodes[0])) for k in range(num_spies-1)])
+                                
             mu.shape = (1,len(mu))
             # print('mu is ', mu, 'd is ',d)
-            Lambda_inv, Lambda = self.compute_lambda_inv(node)
+            Lambda_inv, Lambda = self.compute_lambda_inv(node, spanning_tree)
             # subtract distance from nodes that have seen the message already
             # d_norm = np.array([item_d - 0.5*item_mu for (item_d, item_mu) in zip(d, mu)])
             # d_norm = np.array([item_d - item_mu for (item_d, item_mu) in zip(d, mu)])
@@ -162,10 +223,11 @@ class OptimalEstimator(Estimator):
         # print('the spies are ', self.malicious_nodes)
         return random.choice(max_indices)
         
-    def compute_lambda_inv(self, node):
+    def compute_lambda_inv(self, node, spanning_tree = None):
         num_spies = len(self.malicious_nodes)
         Lambda = np.matrix(np.zeros((num_spies-1, num_spies-1)))
-        spanning_tree = self.get_spanning_tree(node)
+        if spanning_tree is None:
+            spanning_tree = self.get_spanning_tree(node)
         # distances = self.get_distances(self.malicious_nodes[0])
         # spy_distances = [distances[i] for i in self.malicious_nodes]
                 

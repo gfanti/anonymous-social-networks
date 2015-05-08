@@ -2,6 +2,7 @@ import Queue
 import networkx as nx
 import random
 import math
+import sys
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -118,10 +119,11 @@ class Graph(object):
             print self.g.neighbors(n[0])
         
 class Simulation(object):
-    def __init__(self, generator, graph = None):
+    def __init__(self, generator, graph = None, malicious_fraction = 0):
         self.sim = Simulator()
         self.graph = Graph(generator, self.sim)
-        self.graph.infect_random(40)
+        self.malicious_fraction = malicious_fraction
+        self.graph.infect_random(malicious_fraction)
 
     def start_(self, source):
         self.sim.schedule_event(0, source.generate_message)
@@ -152,8 +154,12 @@ class Simulation(object):
                 o = n[1][ATTROBJ]
                 o.intercepted_messages = []
               
+if len(sys.argv) > 1:
+    malicious_fraction = int(sys.argv[1])
+else:
+    malicious_fraction = 0
 # ggen = BTGraphGenerator(2, 6)
 ggen = BAGraphGenerator(100, 1)
 #ggen = BAGraphGenerator(300, 30)
 #ggen = FacebookDataGenerator(300)
-Simulation(ggen).start(1)
+Simulation(ggen,malicious_fraction = malicious_fraction).start(1)
