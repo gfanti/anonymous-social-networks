@@ -64,6 +64,17 @@
    \date{}
    \maketitle
    \thispagestyle{empty}
+\section{Introduction}
+In recent years, anonymous messaging applications like Whisper and Secret have gained popularity. These services spread messages to users’ friends without including any authorship information. In this project, we wish to explore whether a third-party adversary, e.g., local law enforcement, can deanonymize messages by simply participating in the network and knowing the underlying social graph. 
+
+We believe this may be possible due to a recent body of work on locating the patient-zero for a disease spreading over a graph \cite{shah2011rumors}. In our case, the “disease” corresponds to a message, and nodes are ``infected” once they observe the message. Existing work assumes that the estimator can uniformly sample the graph to learn a subset of the infected nodes; given this, there exist strong guarantees and tractable methods for inferring an infection source.
+
+In our case, ``sampled nodes” are nodes corrupted by the adversary, such that they can see the time and content of all messages reaching that node, but do not actively alter the protocol. Corrupted nodes could be either directly colluding with the adversary, or they might be spambots that create artificial friendship links with the sole purpose of monitoring network activity. Due to the patterns of false-friend creation, we believe that such corrupted nodes are unlikely to be uniformly dispersed across the graph. 
+
+In this work, we wish to study two questions: 1) How many legitimate nodes (i.e., corresponding to real people) must an adversary corrupt in order to reliably deanonymize users? 2) How should an adversary select spies in order to maximize the probability of finding the sources of messages? We believe we can show through simulation that networks are susceptible to deanonymization by adversaries with limited power to create friendships and/or corrupt nodes.
+
+
+
 \section{Related Work}
 
 \subsection{Anonymous Social Networks} 
@@ -144,6 +155,31 @@ While this body of work informs our choice of estimators for rumor source identi
 Existing research assumes that samples are taken regularly over the graph. 
 In our work, these sampled nodes correspond to spies or Sybil nodes, which exhibit very different topological characteristics than normal social graph nodes \cite{narayanan2009anonymizing}.
 The question is whether irregularly-spaced Sybil nodes (which are easy to make) can achieve the same deanonymization accuracy as a uniformly-spaced network of spies (which is difficult to build).
+
+\section{Model}
+We model the underlying social network as a graph $\mathcal G(V,E)$, where $V$ denotes the set of vertices, or participants, in the network, and $E$ denotes the set of edges. We assume that some node $v^*$ starts propagating a message at some point in time, and there are $K$ spies, $s_1,\ldots,s_K$. Each spy $s_i$ will collect the timestamp $t_i$ at which it first receives the message.
+
+Each time a node receives the message, it decides whether or not to `like' this message. If a user likes the message, then the message gets spread to that user's friends, whose first impressions will occur with some delay. We model the time delay between a user $i$ liking a message and the user's friend $j$ seeing the message as a random variable $\theta_{ij}$; the $\theta_{ij}$'s, or delays across each edge in the social graph, are assumed to be iid. We do not specify the distribution of $\theta_{ij}$ \emph{a priori}; in principle, this should be informed by measurements of real social network usage.
+
+After a certain point in time, the adversary collects the timing information $t_i$ from all nodes and tries to estimate the true source. Ideally, it would run an optimal estimation algorithm to output the estimated source $\hat v$, but provably optimal estimators are not currently known for general graphs.
+
+
+\section{Methodology}
+A number of factors could impact the efficacy of deanonymization:
+\begin{itemize}
+\item \textbf{Estimator}: The method of estimation 
+\item \textbf{Underlying graph structure}:
+\item \textbf{Fraction of spies}: 
+\item \textbf{Location of spies}:
+\item \textbf{Propagation latency}:
+\end{itemize}
+
+\subsection{Estimators}
+Since the majority of work in this space is 
+
+\section{Results}
+\subsection{Estimator validation}
+We started by attempting to replicate the estimator results in \cite{pinto}.
 
 \bibliography{references}
 \bibliographystyle{ieeetr}
