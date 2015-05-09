@@ -1,7 +1,10 @@
 #!/bin/bash
 
-for i in {1..2}
+for k in {5,10,20,30,40,50,60,70,80,90}
 do
-    j=$((100+$i))
-    python sim.py 30 > data/N100_BA/malicious_30/output$j
+    for i in {1..700}
+    do
+        j=$((300+$i))
+        python sim.py $k > data/N100_BA/malicious_$k/output$j
+    done
 done
