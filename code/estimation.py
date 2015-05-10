@@ -53,65 +53,25 @@ class Estimator(object):
         ''' Returns a networkx spanning tree of the adjacency matrix
         rooted at node'''
         
-        G = nx.Graph()
+        # G = nx.Graph()
+        G = nx.bfs_tree(self.graph, node).to_undirected()
         
-        
-        if use_infectors:
-            G = nx.bfs_tree(self.graph, node)
-            num_spies = len(self.malicious_nodes)
-            # G_old = self.graph
-            # for u,v in G_old.edges():
-                # G_old[u][v]['weight']=1.0
-            # for neighbor in self.adjacency[node]:
-                # G_old[node][neighbor]['weight']=-20
-            # for spy_idx in range(num_spies):
-                # try:
-                    # G_old[self.infectors[spy_idx]][self.malicious_nodes[spy_idx]]['weight']=-20
-                # except:
-                    # print('No connection from ',self.infectors[spy_idx],' to ', self.malicious_nodes[spy_idx])
-                    # print('Neighbors of ', self.infectors[spy_idx], ":", self.adjacency[self.infectors[spy_idx]])
-                    # print(self.infectors)
-                    # print(self.malicious_nodes)
-            # G = nx.minimum_spanning_tree(G_old)
+        # if use_infectors:
             
-            for spy_idx in range(num_spies):
-                spy = self.malicious_nodes[spy_idx]
-                # print('spy: ',spy,'adjacency',self.adjacency[spy],self.infectors[spy_idx])
-                in_edge = G.in_edges(spy)[0][0]
-                if in_edge != self.infectors[spy_idx]:
-                    G.remove_edge(in_edge, spy)
-                    G.add_edge(self.infectors[spy_idx],spy)
-            G = G.to_undirected()
-            # num_nodes = len(self.adjacency)
-            # for vertex in range(num_nodes):
-                # G.add_node(vertex)
-            # # sp_adjacency = [set() for i in range(num_nodes)]
             
-            # nodes = set([i for i in range(num_nodes)])
-            # visited, queue = set(), [node]
-            # while queue and nodes:
-                # vertex = queue.pop(0)
-                # if vertex not in visited:
-                    # nodes.remove(vertex)
-                    # visited.add(vertex)
-                    # print('adjacency of ', vertex, ' is ', self.adjacency[vertex], 'malicious:  ',[i in self.malicious_nodes for i in self.adjacency[vertex]])
-                    # print('list of candidates is ', [i for i in self.adjacency[vertex] - visited if 
-                        # ((i not in self.malicious_nodes) or (self.infectors[self.malicious_nodes.index(i)] == vertex))])
-                    # # print([(i,j) for (i,j) in zip(self.infectors,self.malicious_nodes)])
-                    # newnodes = [i for i in self.adjacency[vertex] - visited if 
-                        # ((i not in self.malicious_nodes) or (self.infectors[self.malicious_nodes.index(i)] == vertex))]
-                    # queue.extend(newnodes)
-                    # # Fix the adjacency matrix here!
-                    # for i in (newnodes):
-                        # # sp_adjacency[vertex].add(i)
-                        # # sp_adjacency[i].add(vertex)
-                        # # if use_infectors and (i in self.malicious_nodes) and (self.infectors[self.malicious_nodes.index(i)] != vertex):
-                            # # continue
-                        # G.add_edge(vertex, i)
-                    # print('Queue', queue, 'nodes',nodes)
-            # # return sp_adjacency
-        else:
-            G = nx.bfs_tree(self.graph, node).to_undirected()
+            # G = nx.bfs_tree(H, node)
+            # # G = nx.bfs_tree(self.graph, node)
+            # # for spy_idx in range(num_spies):
+                # # spy = self.malicious_nodes[spy_idx]
+                # # # print('spy: ',spy,'adjacency',self.adjacency[spy],self.infectors[spy_idx])
+                # # in_edge = G.in_edges(spy)[0][0]
+                # # if in_edge != self.infectors[spy_idx]:
+                    # # G.remove_edge(in_edge, spy)
+                    # # G.add_edge(self.infectors[spy_idx],spy)
+            # G = G.to_undirected()
+            
+        # else:
+            # G = nx.bfs_tree(self.graph, node).to_undirected()
         if not nx.is_connected(G):
             return None
         # print([(i,j) for (i,j) in zip(self.infectors,self.malicious_nodes)])
@@ -154,24 +114,117 @@ class OptimalEstimator(Estimator):
         # self.malicious_nodes[self.ref] = temp
         # #self.ref = 0
 
+    def prune_graph(self):
+        # prunes the graph to include only possible sources
+        num_spies = len(self.malicious_nodes)
+        G_old = self.graph.copy()
+        for spy_idx in range(num_spies):
+            for e in nx.edges(G_old,[self.malicious_nodes[spy_idx]]):
+                if self.infectors[spy_idx] not in e:
+                    G_old.remove_edge(e[0],e[1])
+        # H = G_old
+        # pos = nx.spring_layout(H)
+        # nl = [x for x in H.nodes() if x not in self.malicious_nodes]
+        # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="#A0CBE2")
+        # nl = [x for x in H.nodes() if x in self.malicious_nodes]
+        # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="red")
+        # nx.draw_networkx_edges(H,pos,width=1.0,alpha=0.5)
+        # labels = {}
+        # for x in H.nodes(data=True):
+            # labels[x[0]] = x[0]
+        # nx.draw_networkx_labels(H, pos, labels)
+        # plt.show()
+
+        H = list(nx.connected_component_subgraphs(G_old))
+        points = zip(self.timestamps,self.malicious_nodes,self.infectors)
+        points = sorted(points)
+        times = [item[0] for item in points]
+        spies = [item[1] for item in points]
+        infectors = [item[2] for item in points]
+        members = [spies[0] in comp.nodes() for comp in H]
+        idx = members.index(1)
+        H = H[idx]
+        
+        # pos = nx.spring_layout(H)
+        # nl = [x for x in H.nodes() if x not in self.malicious_nodes]
+        # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="#A0CBE2")
+        # nl = [x for x in H.nodes() if x in self.malicious_nodes]
+        # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="red")
+        # nx.draw_networkx_edges(H,pos,width=1.0,alpha=0.5)
+        # labels = {}
+        # for x in H.nodes(data=True):
+            # labels[x[0]] = x[0]
+        # nx.draw_networkx_labels(H, pos, labels)
+        # plt.show()
+        
+        return H
+        
     def estimate_source(self):
         # Sums the distance to the unvisited nodes and visited nodes at time_t
         max_likelihood = None
         max_indices = []
-        num_spies = len(self.malicious_nodes)
+        
+        G = self.prune_graph()
+        
+        # H =G
+        # pos = nx.spring_layout(H)
+        # nl = [x for x in H.nodes() if x not in self.malicious_nodes]
+        # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="#A0CBE2")
+        # nl = [x for x in H.nodes() if x in self.malicious_nodes]
+        # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="red")
+        # nx.draw_networkx_edges(H,pos,width=1.0,alpha=0.5)
+        # labels = {}
+        # for x in H.nodes(data=True):
+            # labels[x[0]] = x[0]
+        # nx.draw_networkx_labels(H, pos, labels)
+        # plt.show()
+        
+        points = zip(self.timestamps,self.malicious_nodes,self.infectors)
+        pruned_points = [p for p in points if p[1] in G.nodes()]
+        times = [item[0] for item in pruned_points]
+        spies = [item[1] for item in pruned_points]
+        infectors = [item[2] for item in pruned_points]
+        
+        
+        num_spies = len(spies)
+        
+        if num_spies <= 1:
+            print('Not enough spies!')
+            # H =G
+            # pos = nx.spring_layout(H)
+            # nl = [x for x in H.nodes() if x not in self.malicious_nodes]
+            # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="#A0CBE2")
+            # nl = [x for x in H.nodes() if x in self.malicious_nodes]
+            # nx.draw_networkx_nodes(H,pos,nodelist=nl,node_color="red")
+            # nx.draw_networkx_edges(H,pos,width=1.0,alpha=0.5)
+            # labels = {}
+            # for x in H.nodes(data=True):
+                # labels[x[0]] = x[0]
+            # nx.draw_networkx_labels(H, pos, labels)
+            # plt.show()
+            try:
+                return random.choice([node for node in G.nodes() if node not in spies])
+            except:
+                return random.choice([node for node in range(len(self.adjacency)) if self.active_nodes[node] == 1])
+        
         # d = np.diff(self.timestamps)
-        d = np.array([self.timestamps[k+1] - self.timestamps[0] for k in range(num_spies - 1)])
+        # d = np.array([self.timestamps[k+1] - self.timestamps[0] for k in range(num_spies - 1)])
+        d = np.array([times[k+1] - times[0] for k in range(num_spies - 1)])
         # First compute the paths between spy 1 and the rest
         # for i in range(num_spies):
             # print('Spy ',self.malicious_nodes[i],': ', self.timestamps[i])
         # print('timestamps are ', self.timestamps)
         # count = 0
-        for node in range(len(self.adjacency)):
-            if (node in self.malicious_nodes) or (self.active_nodes[node] == -1):
+        
+        for node in G.nodes():
+            if (node in spies) or (self.active_nodes[node] == -1):
                 continue
-            spanning_tree = self.get_spanning_tree(node, use_infectors=True)
-            if spanning_tree is None:
-                continue
+            # spanning_tree = self.get_spanning_tree(node, use_infectors=True)
+            # if spanning_tree is None:
+                # continue
+            spanning_tree = nx.bfs_tree(G, node).to_undirected()
+            
+            
             # spanning_tree = self.get_spanning_tree(node)
             # inconsistent = False
             # for sp_node in self.malicious_nodes:
@@ -196,12 +249,15 @@ class OptimalEstimator(Estimator):
             # mu = np.array([2.0*(nx.shortest_path_length(self.graph, node, self.malicious_nodes[k+1]) - 
                                 # nx.shortest_path_length(self.graph, node, self.malicious_nodes[0])) for k in range(num_spies-1)])
                                 
-            mu = np.array([2.0*(nx.shortest_path_length(spanning_tree, node, self.malicious_nodes[k+1]) - 
-                                nx.shortest_path_length(spanning_tree, node, self.malicious_nodes[0])) for k in range(num_spies-1)])
+            # mu = np.array([2.0*(nx.shortest_path_length(spanning_tree, node, self.malicious_nodes[k+1]) - 
+                                # nx.shortest_path_length(spanning_tree, node, self.malicious_nodes[0])) for k in range(num_spies-1)])
+                                
+            mu = np.array([2.0*(nx.shortest_path_length(spanning_tree, node, spies[k+1]) - 
+                                nx.shortest_path_length(spanning_tree, node, spies[0])) for k in range(num_spies-1)])                                
                                 
             mu.shape = (1,len(mu))
             # print('mu is ', mu, 'd is ',d)
-            Lambda_inv, Lambda = self.compute_lambda_inv(node, spanning_tree)
+            Lambda_inv, Lambda = self.compute_lambda_inv(node, spies, spanning_tree)
             # subtract distance from nodes that have seen the message already
             # d_norm = np.array([item_d - 0.5*item_mu for (item_d, item_mu) in zip(d, mu)])
             # d_norm = np.array([item_d - item_mu for (item_d, item_mu) in zip(d, mu)])
@@ -220,11 +276,15 @@ class OptimalEstimator(Estimator):
             elif (max_likelihood == likelihood):
                 max_indices.append(node)
         # print('the candidates are ', max_indices)
-        # print('the spies are ', self.malicious_nodes)
-        return random.choice(max_indices)
+        # print('the spies are ', spies)
+        if max_indices:
+            return random.choice(max_indices)
+        else:
+            print('No valid nodes!')
+            return random.choice([node for node in range(len(self.adjacency)) if self.active_nodes[node] == 1])
         
-    def compute_lambda_inv(self, node, spanning_tree = None):
-        num_spies = len(self.malicious_nodes)
+    def compute_lambda_inv(self, node, spies, spanning_tree = None):
+        num_spies = len(spies)
         Lambda = np.matrix(np.zeros((num_spies-1, num_spies-1)))
         if spanning_tree is None:
             spanning_tree = self.get_spanning_tree(node)
@@ -233,8 +293,10 @@ class OptimalEstimator(Estimator):
                 
         paths = []
         for i in range(num_spies-1):
-            source = self.malicious_nodes[0]
-            destination = self.malicious_nodes[i+1]
+            # source = self.malicious_nodes[0]
+            source = spies[0]
+            # destination = self.malicious_nodes[i+1]
+            destination = spies[i+1]
             # path = self.dijkstra(source, destination, spanning_tree)
             path = nx.shortest_path(spanning_tree, source, destination)
             #path.pop(0)
@@ -247,7 +309,8 @@ class OptimalEstimator(Estimator):
             for j in range(num_spies-1):
                 if i == j:
                     # Lambda[i,j] = spy_distances[i+1]
-                    Lambda[i,j] = nx.shortest_path_length(spanning_tree,self.malicious_nodes[0],self.malicious_nodes[i+1])
+                    # Lambda[i,j] = nx.shortest_path_length(spanning_tree,self.malicious_nodes[0],self.malicious_nodes[i+1])
+                    Lambda[i,j] = nx.shortest_path_length(spanning_tree,spies[0],spies[i+1])
                 else:
                     p_i = zip(paths[i], paths[i][1:])
                     p_j = zip(paths[j], paths[j][1:])
@@ -275,15 +338,27 @@ class OptimalEstimator(Estimator):
         return Lambda_inv, Lambda
 
 class FirstSpyEstimator(Estimator):
+    def __init__(self, adjacency, malicious_nodes, timestamps, infectors = None):
+        super(FirstSpyEstimator, self).__init__(adjacency, malicious_nodes, timestamps, infectors = infectors)
+        
     def estimate_source(self):
         # Picks a random neighbor of the first spy to receive the message
         # print(self.timestamps)
         # print('timestamps 0',self.timestamps[0],self.malicious_nodes[0],'adj:',self.adjacency[self.malicious_nodes[0]])
         estimate = random.randint(0, len(self.adjacency)-1)
-        for spy in self.malicious_nodes:
-            options = [option for option in self.adjacency[spy] if option not in self.malicious_nodes]
-            if options:
-                estimate = random.choice(options)
+        points = zip(self.timestamps,self.malicious_nodes,self.infectors)
+        points = sorted(points)
+        times = [item[0] for item in points]
+        spies = [item[1] for item in points]
+        infectors = [item[2] for item in points]
+        
+        for (spy,infector) in zip(spies,infectors):
+            # options = [option for option in self.adjacency[spy] if option not in spies]
+            # if options:
+                # estimate = random.choice(options)
+                # break
+            if infector not in spies:
+                estimate = infector
                 break
         return estimate
         
