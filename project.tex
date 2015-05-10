@@ -3,6 +3,7 @@
 \usepackage{times,url}
 \usepackage{multirow}
 \usepackage{tabularx}
+\usepackage{amsmath}
 \usepackage{rotating}
 \usepackage{xcolor}
 \usepackage{array}
@@ -179,7 +180,31 @@ Since the majority of work in this space is
 
 \section{Results}
 \subsection{Estimator validation}
-We started by attempting to replicate the estimator results in \cite{pinto}.
+We started by attempting to replicate the estimator results in \cite{pinto}. 
+In this replication process, we ran into a number of challenges. We encountered four primary mistakes or omissions in \cite{pinto} that affected our estimation accuracy; some of these were easy to correct once we identified them, others were not:
+\begin{itemize}
+\item There is a typo in equation (2), which describes how to compute the observed delay vector. It should say $[\boldsymbol d]_k=t_{k+1}-t_1$ instead of $[\boldsymbol d]_k=t_{k+1}-t_k$. This is a critical mistake in the description of the estimator that leads to incorrect likelihoods. 
+\item Algorithm 2 of the supplemental materials describes how to compute likelihoods for general graphs. In step 6, it should say ``compute the source likelihood using equation (4) for node $s$.", rather than ``using equation (7)." This is because over general graphs, the covariance matrix $\Lambda_s$ is not identical for all nodes, which causes the simplifications in equation (7) to be invalid. As such, the likelihoods should be computed using the more general equation (4). This error initially led to incorrect likelihood computations in our code.
+\item Algorithm 2 of the supplemental materials does not explain how to prune graphs that are not tree-structured. Additionally, it does not describe how to incorporate the direction of infection into estimation. These omissions collectively have a significant impact the likelihoods obtained by the algorithm, and we suspect this is partially responsible for our inability to exactly reproduce their results.
+\item The parameter specifications of the random graphs in Table 1 are not given. Specifically, the Barabasi-Albert parameter is not given. We therefore tried a range of different parameters.
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[height = 2.4in]{figures/pd_vs_spies}
+\caption{Probability of detection, i.e. $P(\hat v = v^*)$, as a function of the spy probability $p$. This plot was generated over 3-regular trees. Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.}
+\label{fig:pd_vs_spies}
+%\vspace*{-0.4in}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[height = 2.4in]{figures/hops_vs_spies}
+\caption{Hop distance of the estimate $\hat v$ from the true source $v^*$ as a function of the spy probability $p$. This plot was generated over 3-regular trees. Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.}
+\label{fig:pd_vs_spies}
+%\vspace*{-0.4in}
+\end{figure}
+
 
 \bibliography{references}
 \bibliographystyle{ieeetr}
