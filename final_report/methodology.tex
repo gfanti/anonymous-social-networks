@@ -14,6 +14,10 @@ If one of Alice's friends decides to ``like'' the message, the message will be f
 
 We assume there are $K$ spies in the network, $o_1,\ldots,o_K$. Each spy $o_i$ will collect the timestamp $t_i$ at which it first receives the message.
 
+Our adversarial model derives directly from the normal model. A moderately powerful adversary is able to compromise certain users in the social network. This may be accomplished by offering some incentives to users and recruit them act as spies. The spies are not active, but are instead passive observers. The only thing that differentiates spies from honest users is that spies will collect all messages, and then send these messages to the adversary periodically. The adversary uses the collected messages to attempt to track down the perpetrator of the message. Therefore, the 
+
+The central adversary will receive different sets of messages, and it will need to group them into a \emph{collection} -- a group of messages received at different nodes that came from the same source. We assume that these messages are not encrypted, and thus the adversary can use the plaintext information directly to identify the correct collection membership. 
+
 \subsection{Efficacy of deanonymization}
 
 A number of factors could impact the efficacy of deanonymization:
