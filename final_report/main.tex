@@ -1,0 +1,332 @@
+\documentclass[10pt,preprint,nocopyrightspace]{sigplanconf}
+%
+%% SOME OF OUR DEFINITIONS
+%
+\usepackage{xspace}
+%\newcommand{\sys}{MiniCrypt\xspace}
+
+
+\usepackage{fancyvrb}
+\usepackage{listings}
+
+\usepackage[compact]{titlesec}
+%\titleformat{\section}{\normalfont\bfseries}{\thesection}{1em}{}
+%\titlespacing*{\section}{1pt}{*0}{1pt}
+
+\newcommand{\longerpaper}[1]{}
+
+\usepackage{numprint}
+
+\usepackage{multirow}
+
+\lstset{
+    basicstyle=\footnotesize\ttfamily,
+      columns=fullflexible,
+        keepspaces=true,
+        }
+
+\usepackage{subfigure}
+\usepackage{ifpdf}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[letterpaper, breaklinks, pdfborder={0 0 0}]{hyperref}
+\hypersetup{
+    backref=true
+      bookmarksnumbered,
+        colorlinks=true,
+          pdfstartview={FitH},
+            citecolor={blue},
+              linkcolor={blue},
+                urlcolor={blue},
+                  citecolor={blue},
+                    pdfpagemode={UseOutlines}
+                      }
+
+  %\usepackage{algorithmic}
+
+\usepackage[noend]{algpseudocode}
+
+% edit the comments
+\usepackage{eqparbox}
+\renewcommand{\algorithmiccomment}[1]{\eqparbox{COMMENT}{// {\emph
+      #1}}}
+
+%\usepackage{multicol}
+\usepackage{amsmath, amssymb}
+\usepackage{amsthm}
+\usepackage{enumitem}
+%\usepackage{rotating}
+%\onehalfspacing
+%\newcommand{\tbd}[1]{[{\bf{#1}}]}
+\newcommand{\tbd}[1]{}
+\newcommand{\ie}{{\it i.e.}}
+\newcommand{\eg}{{\it e.g.}}
+\newcommand{\etc}{{\it etc.}}
+\newcommand{\eat}[1]{}
+
+
+\newcommand{\mypara}[1]{\noindent{\bf {#1}.}~}
+\newcommand{\submypara}[1]{\medskip\noindent{\it {#1}.}~}
+\newcommand{\chk}{$\checkmark$}
+\newcommand{\dsh}{{\bf --}}
+\newcommand{\til}{{\bf\large \textasciitilde}}
+\usepackage{rotating}
+
+\usepackage{framed}
+
+
+% for packing
+\newcommand{\mem}{\mathsf{MemorySize}\xspace}
+\newcommand{\data}{\mathsf{Data}\xspace}
+\newcommand{\cratio}{\mathsf{cr}\xspace}
+\newcommand{\maxcr}{\mathsf{maxcr}\xspace}
+\newcommand{\sizeof}{\mathsf{sizeof}\xspace}
+\newcommand{\nmax}{n_{\max}}
+\newcommand{\rowsize}{\mathsf{rowsize}}
+\newcommand{\diskbw}{\mathsf{DiskTransferBandwidth}\xspace}
+\newcommand{\diskseek}{\mathsf{DiskSeekTime}\xspace}
+
+
+% RESULTS
+
+
+\usepackage{enumitem}
+\setlist[itemize]{itemsep=0.00cm}
+\setlist[itemize]{parsep=0.01cm}
+%\setlist[itemize]{parskip=0.01cm}
+
+
+\newenvironment{myitemize}
+{ \begin{itemize}[nolistsep]
+        \setlength{\itemsep}{0.5pt}
+            \setlength{\parskip}{0.9pt}
+                \setlength{\parsep}{0.1pt}     }
+{ \end{itemize}                  }
+
+\newcommand{\green}[1]{{\color{ForestGreen}{#1}}}
+
+
+% our encryption scheme
+
+\newcommand{\keygen}{\mathsf{KeyGen}}
+\newcommand{\Enc}{\mathsf{Enc}}
+\newcommand{\enc}{\Enc}
+\newcommand{\en}{\mathsf{enc}}
+
+
+\renewcommand{\mod}{\mathsf{mod}\xspace}
+
+% requires amsthm, enumitem
+%\theoremstyle{algorithms}
+%\newtheorem{construction}{Algorithm}
+%\newcommand{\ALGORITHM}[4]{%  name, llabel, intro, \items
+%\begin{construction}[#1]\label{#2} \mbox{}
+%\normalfont\noindent
+% #3
+% \vspace{0.13\baselineskip}
+% \begin{enumerate}[noitemsep,nolistsep]\itemsep=0.1\baselineskip
+% #4
+% \end{enumerate}
+% \end{construction}
+%}
+
+
+
+\newcommand{\ALGORITHM}[4]{%  name, llabel, intro, \items
+  \let\oldi\labelenumi
+  \let\oldii\labelenumii
+  \let\oldiii\labelenumiii
+  \renewcommand{\labelenumi}{\arabic{enumi}: }
+  \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}: }
+  \renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}:
+  }
+  \noindent \textbf{#1:} \label{#2}
+  #3
+   \vspace{0.13\baselineskip}
+    \begin{enumerate}[noitemsep,nolistsep]\itemsep=0.1\baselineskip
+       #4
+       \end{enumerate}
+     \let\labelenumi\oldi
+     \let\labelenumii\oldii
+     \let\labelenumiii\oldii
+     }
+
+%\newcommand{\subparagraph}{\paragraph}
+%\usepackage[compact]{titlesec}
+
+%\newcommand{\simplequote}[1]{\begin{quote}{\it{#1}}\end{quote}}
+
+%\renewcommand\%bibname{}
+
+
+%\usepackage[compact]{titlesec}
+%\titlespacing{\section}{0pt}{0pt}{0pt}
+%\titlespacing*{?command?}{?left?}{?beforesep?}{?aftersep?}[?right?]
+
+
+
+\newcommand{\tickYes}{\checkmark}
+
+% people
+\newcommand{\ion}[1]{{\color{Red} IS: {#1}}}
+\newcommand{\rachit}[1]{{\color{Red} RAg: {#1}}}
+\newcommand{\rp}[1]{{\color{Red} RPo: {#1}}}
+\newcommand{\frank}[1]{{\color{CarnationPink} FL: {#1}}} % :)
+\newcommand{\wz}[1]{{\color{SkyBlue} WZ: {#1}}} % :)
+\newcommand{\qu}[1]{{\color{Magenta}  {\bf Question:} {#1}}}
+\newcommand{\warning}[1]{{\color{Red}{\bf Warning: #1}}}
+\newcommand{\todo}[1]{{\color{Red} [todo: {#1}]}}
+
+\newcommand{\aes}{\mathsf{AES}}
+\newcommand{\encr}{\mathsf{enc\_r}}
+%
+\newcommand{\get}{\texttt{get}}
+\newcommand{\delete}{\texttt{delete}}
+\renewcommand{\put}{\texttt{put}\@\xspace}
+\newcommand{\key}{\texttt{key}\xspace}
+\newcommand{\val}{\texttt{value}\xspace}
+\newcommand{\ver}{\texttt{version}\xspace}
+\newcommand{\packID}{\texttt{packID}\xspace}
+\newcommand{\pvalue}{\texttt{pvalue}\xspace}
+\newcommand{\low}{\texttt{low}\xspace}
+\newcommand{\high}{\texttt{high}}
+\newcommand{\merge}{\texttt{merge}}
+\newcommand{\msplit}{\texttt{split}}
+\newcommand{\result}{\texttt{result}}
+\newcommand{\pack}{\texttt{pack}\xspace}
+\newcommand{\ts}{\mathsf{ts}}
+
+
+% Compact itemize and enumerate.  Note that they use the same counters and                         
+% symbols as the usual itemize and enumerate environments.                                         
+\makeatletter
+\def\compactify{\itemsep=3pt plus3pt \topsep=3pt plus3pt \partopsep=0pt
+\parsep=0pt \leftmargin=1.3em}
+\let\latexusecounter=\usecounter
+\def\CompactItemize{%                                                                              
+  \ifnum \@itemdepth >\thr@@\@toodeep\else
+    \advance\@itemdepth\@ne
+    \edef\@itemitem{labelitem\romannumeral\the\@itemdepth}%                                        
+    \expandafter
+    \list
+      \csname\@itemitem\endcsname
+      {\compactify\def\makelabel##1{\hss\llap{##1}}}%                                              
+  \fi}
+\let\endCompactItemize\endlist
+\newenvironment{CompactEnumerate}
+  {\def\usecounter{\compactify\latexusecounter}
+   \begin{enumerate}}
+  {\end{enumerate}\let\usecounter=\latexusecounter}
+\makeatother
+
+
+
+\begin{document}
+
+
+
+%
+% --- Author Metadata here ---
+%\conferenceinfo{WOODSTOCK}{'97 El Paso, Texas USA}
+%\CopyrightYear{2007} % Allows default copyright year (20XX) to be
+%over-ridden - IF NEED BE.
+%\crdata{0-12345-67-8/90/01}  % Allows default copyright data
+%(0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
+% --- End of Author Metadata ---
+
+\title{A Study on Deanonymizing Anonymous Social Networks}
+
+% other title: or An encrypted and compressed key-value store \\
+% Reconciling encryption and compression for key-value stores
+% other paper names:  XZip, EncZip, Enczipt, CryptZip, CZip, EZip,
+% Cryptar/CrypTar  (crypt+tar), Tarx, Tarc (tar +crypt), MiniCrypt
+
+
+
+%
+% You need the command \numberofauthors to handle the 'placement
+% and alignment' of the authors beneath the title.
+%
+% For aesthetic reasons, we recommend 'three authors at a time'
+% i.e. three 'name/affiliation blocks' be placed beneath the title.
+%
+% NOTE: You are NOT restricted in how many 'rows' of
+% ``name/affiliations'' may appear. We just ask that you restrict
+% the number of 'columns' to three.
+%
+% Because of the available 'opening page real-estate'
+% we ask you to refrain from putting more than six authors
+% (two rows with three columns) beneath the article title.
+% More than six makes the first-page appear very cluttered indeed.
+%
+% Use the \alignauthor commands to handle the names
+% and affiliations for an 'aesthetic maximum' of six authors.
+% Add names, affiliations, addresses for
+% the seventh etc. author(s) as the argument for the
+% \additionalauthors command.
+% These 'additional authors' will be output/set for you
+% without further effort on your part as the last section in
+% the body of your article BEFORE References or any Appendices.
+
+%\numberofauthors{5} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors
+% section.
+%
+\authorinfo{}
+
+%\date{30 July 1999}
+% Just remember to make sure that the TOTAL number of authors
+% is the number that will appear on the first page PLUS the
+% number that will appear in the \additionalauthors section.
+
+\maketitle
+
+
+
+\input{abstract}
+\input{intro}
+\input{related}
+\input{methodology}
+\input{eval}
+\input{future}
+
+% A category with the (minimum) three required fields
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
+%A category including the fourth, optional field follows...
+%\category{D.2.8}{Software Engineering}{Metrics}[complexity measures,
+%performance measures]
+
+
+%\terms{Systems}
+
+%\keywords{ACM proceedings, \LaTeX, text tagging}
+
+
+
+
+
+%
+% The following two commands are all you need in the
+% initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+%% \bibliographystyle{abbrv}
+%%     \bibliography{related_work,rp,rp-str,rp-conf}
+% sigproc.bib is the name of the Bibliography in this case
+% You must have a proper ``.bib'' file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+
+\bibliography{references}
+\bibliographystyle{ieeetr}
+
+%
+% ACM needs 'a single self-contained file'!
+%
+%APPENDICES are optional
+\balancecolumns
+
+% That's all folks!
+\end{document}
+
+}

@@ -1,0 +1,50 @@
+\section{Methodology}
+We use a simulation-based approach to study these questions. 
+
+A number of factors could impact the efficacy of deanonymization:
+\begin{description}
+\item[Underlying graph structure] The underlying graph structure may affect deanonymization a lot. For example, a tree-like structure with no loops is easier to deanonymize because there are fewer possible paths to analyze. In our simulation, we study many different types of graphs, including trees, Erdos-Renyi, and Barabasi-Albert graphs.
+\item[Fraction of spies] The fraction of spies will greatly impact the deanonymization performance. Fewer spies means less information, and thus makes the true source much harder to track. Using simulation, we want to \emph{quantify} how many spies are needed to efficiently find the true source.
+\item[Location of spies] We hypothesize that uniform distribution of spy nodes will be most effective in deanonymizing nodes, because they are able to intercept messages on a wide scale. We would also like to 
+\item[Propagation latency] The propagation latency is modeled as the time for the message to leave one user and is seen by another user. 
+We model the propagation latency in two ways: using a Gaussian distribution, and a geometric random variable. 
+\item[Estimator] We try different methods of estimation. The majority of our effort is spent on adapting the observer model~\cite{pinto} to our spy nodes setting.
+\end{description}
+
+\subsection{Estimators}
+Initially, we attempted to come up with some estimators on our own. \todo{Should we mention the Jordan estimators here?}
+
+The observer model estimator~\cite{pinto} is a maximum likelihood estimator. The setup is quite similar to our simulation: given a graph $G$, there exists a set of $K$ observers that pick up information transmitted in the network. The collected information has receiving timestamp, as well as the direction information (e.g. observer $o$ receives the message from neighbor $v$). Before diving into the actual estimator equations, we need to define some terms:
+
+Let $\boldsymbol{d}$ be the timer difference of observed arrivals, and defined as
+
+\begin{equation}
+\boldsymbol{d}_k = t_{k+1} - t_1
+\end{equation}
+
+where $t_i$ indicates the observed message receiving timestamp at observer $i$, and $k$ = 1 ... $K_a$.
+
+The next term is the determinstic delay, which is the delay that one \emph{should} observe if the information propagated from some source $s$ ($s$ is an honest node in the graph):
+
+\begin{equation}
+\boldsymbol{\mu}_{s,k} = \mu (|P(s, o_{k+1})| - |P(s, o_1)|)
+\end{equation}
+
+
+\begin{equation}
+\end{equation}
+
+
+The authors dictate a general source estimator equation for trees 
+
+\begin{equation}
+\label{eq:general}
+\hat{s} = \arg\max_{s \in \tau_{a}} \dfrac{\exp(-\frac{1}{2} (\boldsymbol{d} - \boldsymbol{\mu}_{s})^{T} \boldsymbol{\Lambda}_s^{-1} (\boldsymbol{d} - \boldsymbol{\mu}_s) }{|\boldsymbol{\Lambda}_s|^{1/2}}
+\end{equation}
+
+Equation \ref{eq:general} can be further simplified if the estimator is able to 
+
+\begin{equation}
+\label{eq:tree}
+\hat{s} = \arg\max_{s \in \tau_{a}} \boldsymbol{\mu}_{s}^{T}
+\end{equation}

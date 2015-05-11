@@ -1,0 +1,9 @@
+\section{Future work}
+\textbf{What remains:} At this point, the number 1 priority is developing a more sensitive and methodical estimator than the Jordan estimator. In particular, we need to develop a method for incorporating timing information in our source estimates. 
+
+Once that is complete, we will run different simulations in order to explore the parameter space adequately. We will also consider more complex estimators, but these are likely to be heuristics, since optimal estimators in this space are difficult to compute. It seems like the path forward will be fairly methodical.
+
+We are also planning to test estimation when the adversary knows only a subset of the underlying graph. This is a more realistic scenario in practice, because it might be difficult for an adversary to learn the whole graph if the social network is maintained by a private company. Of course, this depends on the strength of the adversary. 
+We plan to sample the underlying real graph to create a subgraph.
+In this scenario, we may need to develop new heuristic methods for inferring the true message source over partial estimates of the underlying network based on the simulation results.
+
