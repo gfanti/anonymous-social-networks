@@ -1,7 +1,22 @@
 \section{Methodology}
-We use a simulation-based approach to study these questions. 
+
+\subsection{Model}
+
+We assume an application model that is quite similar to Secret~\cite{secret}.
+
+\begin{figure}
+\centering
+\includegraphics[height = 2.4in]{figures/secret_infrastructure}
+\caption{An overview of the infrastructure for a typical anonymous social network.}
+\label{fig:secret_infrastructure}
+\end{figure}
+
+Fig.~\ref{fig:secret_infrastructure} shows how a typical anonymous network works. Users are connected to friends as in a regular social network. When Alice decides to send a message to her friends, Alice's message is routed to a centralized server first. The server looks up Alice's neighbors and propagates the message to them. Alice's neighbors do not know who sent the message. To them, the message is from the centralized server instead of directly from Alice, and does not have any information about the sender herself. If one of Alice's friends decides to ``like'' the message, the message will be further propagated to her friend's friends. Thus, whenever a user receives a message, he/she does not know if a neighboring friend sent it, or if it was simply liked by a friend.
+
+\subsection{Efficacy of deanonymization}
 
 A number of factors could impact the efficacy of deanonymization:
+
 \begin{description}
 \item[Underlying graph structure] The underlying graph structure may affect deanonymization a lot. For example, a tree-like structure with no loops is easier to deanonymize because there are fewer possible paths to analyze. In our simulation, we study many different types of graphs, including trees, Erdos-Renyi, and Barabasi-Albert graphs.
 \item[Fraction of spies] The fraction of spies will greatly impact the deanonymization performance. Fewer spies means less information, and thus makes the true source much harder to track. Using simulation, we want to \emph{quantify} how many spies are needed to efficiently find the true source.

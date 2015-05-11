@@ -2,8 +2,10 @@
 
 The evaluation of our work is executed on a discrete-event simulator written in Python. This simulator is similar to existing discrete-event simulators such as ns3. Events are put onto a priority queue ordered by time, and executed in a single loop.
 
-This simulator takes in as input different network structures with a list of nodes, links, and node types. Nodes can be either honest or malicious. As mentioned before, we simulate passive adversaries: malicious nodes are honest-but-curious. Whenever a malicious node receives a message, it adds the message, along with the time at which the message is received, to a list of intercepted messages. The timestamp used is the global simulator time, thus we assume that the spies' clocks are roughly synchronized (or that the synchronization time is much smaller than). 
-The simulator produces the messages intercepted from malicious nodes.
+This simulator takes in as input different network structures with a list of nodes, links, and node types. 
+Nodes can be either honest or malicious. As mentioned before, we simulate passive adversaries: malicious nodes are honest-but-curious. Whenever a malicious node receives a message, it adds the message, along with the time at which the message is received, to a list of intercepted messages. The timestamp used is the global simulator time, thus we assume that the spies' clocks are roughly synchronized (or that the synchronization time is much smaller than). 
+
+At the start of a simulation run, a certain percentage of the nodes are compromised. The percentage number can be tweaked to adjust the number of malicious nodes in the network. The simulator then runs for some number of time steps and produces a list of messages intercepted from malicious nodes. After the simulation, the estimators take in the list of timestamped messages and produce guesses for the true source of the message.
 
 \subsection{Estimator validation}
 We started by attempting to replicate the estimator results in \cite{pinto}. 
@@ -33,15 +35,6 @@ We first tested the estimator on trees. As assumed in \cite{pinto}, each node tr
 %\vspace*{-0.4in}
 \end{figure}
 
-\subsection{Facebook}
+\subsection{Facebook dataset}
 
-We have found a Facebook dataset \todo{cite} that we plan to use in our simulation, which contains the Facebook links among about 10,000 nodes in 2009. Given a graph, the simulator allows nodes to make decisions about when and how they will spread a message to their neighbors. 
-The simulator is implemented as a discrete-time system. Nodes decide to approve messages by drawing samples from a Bernoulli random variable with parameter $0.5$. The network latency is modeled with a geometric random variable with parameter $p$. 
-At the start of a simulation run, a certain percentage of the nodes are compromised. We are currently compromising \emph{random} nodes in the network, though we hope to explore different layout of spy nodes. 
-At the end of a simulation run, the list of timestamped messages received by malicious nodes are stored in a file and input into estimation algorithms.
-
-We have also implemented a Jordan centrality estimator, which guesses that the true message source is the node with the lowest Jordan centrality. The Jordan centrality of a node is defined as the distance from that node to the farthest node on the graph. In our case, we are finding the node with the minimum distance to the farthest-away spy node in the network. This is the most basic estimator we will test, as it does not even use timing information from the spies. Note that if we were to use this estimator as time tends to infinity, the estimate would always be the same---namely, the most ``central" node in the graph. So we will start by using this estimator at different points in time to infer how the estimate changes over time. We expect the best estimates to occur when the timestamp is small.
-
-Thus far, we have used our simulator to simulate message spreads over Barabasi-Albert graph. However, we have not run our estimation algorithms yet, so we do not know how well the adversary can infer the true message source.
-
-Additionally, we have changed our project definition slightly after realizing that inserting Sybils into the network is equivalent to saying that the legitimate end of Sybil attack edges are spies. Therefore, Sybils do not give any additional information; as such, we can understand the threat that Sybils pose by simply quantifying the proportion of network nodes that befriend Sybils, and treating them as spies. 
+Randomized graphs provide decent estimates for the estimators' effectivness, but they are still different from real datasets. In order to test our estimators on realistic data, we use a Facebook dataset~\cite{viswanath-2009-activity} from New Orleans. The dataset contains all of the user-to-user connections on Facebook in New Orleans. Since the number of users is large, we use \emph{ego sampling} on the dataset. Ego sampling takes a random node from the graph and samples all nodes within $n$ hops from the initial node. For our experiments, we use $n = 2$.
