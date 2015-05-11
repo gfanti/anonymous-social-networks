@@ -13,6 +13,10 @@ We assume an application model that is quite similar to Secret~\cite{secret}.
 
 Fig.~\ref{fig:secret_infrastructure} shows how a typical anonymous network works. Users are connected to friends as in a regular social network. When Alice decides to send a message to her friends, Alice's message is routed to a centralized server first. The server looks up Alice's neighbors and propagates the message to them. Alice's neighbors do not know who sent the message. To them, the message is from the centralized server instead of directly from Alice, and does not have any information about the sender herself. If one of Alice's friends decides to ``like'' the message, the message will be further propagated to her friend's friends. Thus, whenever a user receives a message, he/she does not know if a neighboring friend sent it, or if it was simply liked by a friend.
 
+Our adversarial model derives directly from the normal model. A moderately powerful adversary is able to compromise certain users in the social network. This may be accomplished by offering some incentives to users and recruit them act as spies. The spies are not active, but are instead passive observers. The only thing that differentiates spies from honest users is that spies will collect all messages, and then send these messages to the adversary periodically. The adversary uses the collected messages to attempt to track down the perpetrator of the message. Therefore, the 
+
+The central adversary will receive different sets of messages, and it will need to group them into a \emph{collection} -- a group of messages received at different nodes that came from the same source. We assume that these messages are not encrypted, and thus the adversary can use the plaintext information directly to identify the correct collection membership. 
+
 \subsection{Efficacy of deanonymization}
 
 A number of factors could impact the efficacy of deanonymization:
