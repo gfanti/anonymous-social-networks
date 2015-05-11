@@ -31,7 +31,7 @@ Initially, we attempted to come up with some estimators on our own. \todo{Should
 
 The observer model estimator~\cite{pinto} is a maximum likelihood estimator. The setup is quite similar to our simulation: given a graph $G$, there exists a set of $K_a$ observers that pick up information transmitted in the network. The collected information has receiving timestamp, as well as the direction information (e.g. observer $o$ receives the message from neighbor $v$). Before diving into the actual estimator equations, we need to define some terms:
 
-Let $\boldsymbol{d}$ be the timer difference of observed arrivals, and defined as
+Let $\boldsymbol{d}$ be the timestamp differences of observed arrivals with respect to some reference spy node, and defined as
 
 \begin{equation}
   \boldsymbol{d}_k = t_{k} - t_1
@@ -55,16 +55,16 @@ where $|P(u, v)|$ denotes the number of edges on the path that connects nodes $u
 \end{equation}
 
 
-The authors dictate a general source estimator equation for trees 
+The authors present a source estimator equation for general trees:
 
 \begin{equation}
 \label{eq:general}
-\hat{s} = \arg\max_{s \in \tau_{a}} \dfrac{\exp(-\frac{1}{2} (\boldsymbol{d} - \boldsymbol{\mu}_{s})^{T} \boldsymbol{\Lambda}_s^{-1} (\boldsymbol{d} - \boldsymbol{\mu}_s) }{|\boldsymbol{\Lambda}_s|^{1/2}}
+\hat{s} = \arg\max_{s \in \tau_{a}} \dfrac{\exp(-\frac{1}{2} (\boldsymbol{d} - \boldsymbol{\mu}_{s})^{T} \boldsymbol{\Lambda}_s^{-1} (\boldsymbol{d} - \boldsymbol{\mu}_s) }{|\boldsymbol{\Lambda}_s|^{1/2}}.
 \end{equation}
 
-Equation \ref{eq:general} can be further simplified if the estimator is able to 
+Equation \ref{eq:general} can be applied to general graphs, However, if the underlying graph is tree-structured, equation \ref{eq:general} simplifies to
 
 \begin{equation}
 \label{eq:tree}
-\hat{s} = \arg\max_{s \in \tau_{a}} \boldsymbol{\mu}_{s}^{T}
+\hat{s} = \arg\max_{s \in \tau_{a}} \boldsymbol{\mu}_{s}^{T} \boldsymbol{\Lambda}_s^{-1} (\boldsymbol{d} - \frac{1}{2}\boldsymbol{\mu}_s).
 \end{equation}
