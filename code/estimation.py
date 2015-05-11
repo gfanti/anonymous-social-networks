@@ -159,12 +159,15 @@ class OptimalEstimator(Estimator):
         
         return H
         
-    def estimate_source(self):
+    def estimate_source(self, use_directions=True):
         # Sums the distance to the unvisited nodes and visited nodes at time_t
         max_likelihood = None
         max_indices = []
         
-        G = self.prune_graph()
+        if use_directions:
+            G = self.prune_graph()
+        else:
+            G = self.graph
         
         # H =G
         # pos = nx.spring_layout(H)
