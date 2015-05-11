@@ -159,7 +159,7 @@ if len(sys.argv) > 1:
 else:
     malicious_fraction = 0
 # ggen = BTGraphGenerator(2, 6)
-ggen = BAGraphGenerator(100, 1)
+#ggen = BAGraphGenerator(100, 1)
 #ggen = BAGraphGenerator(300, 30)
-#ggen = FacebookDataGenerator(300)
+ggen = FacebookDataGenerator(800)
 Simulation(ggen,malicious_fraction = malicious_fraction).start(1)
