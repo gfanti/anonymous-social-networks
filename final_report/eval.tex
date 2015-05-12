@@ -67,6 +67,7 @@ Figures \ref{fig:ba_graph} and \ref{fig:ba_graph_p1} show the probability of det
     \caption{Probability of detection vs. spy fraction over Barabasi-Albert graphs with minimum degree $m=5$ and number of nodes $N=100$.} 
 \label{fig:ba_graph}
   \end{minipage} 
+\hfill
 \begin{minipage}[b]{0.48\linewidth}
     \includegraphics[width=3in]{figures/ba_graphs_p1} 
     \caption{Probability of detection vs. fraction over Barabasi-Albert graphs with minimum degree $m=1$ and number of nodes $N=100$.} 
@@ -81,14 +82,14 @@ Figures \ref{fig:ba_graph} and \ref{fig:ba_graph_p1} show the probability of det
   \begin{minipage}[b]{0.48\linewidth}
     \includegraphics[width=3in]{figures/ba_hops_p1} 
     \caption{Hop distance from estimate to true source vs. spy fraction over Barabasi-Albert graphs with minimum degree $m=1$ and number of nodes $N=100$.} 
-  \end{minipage} 
 \label{fig:ba_hops_p1}
+  \end{minipage} 
 \end{figure*}
 
 Note that the first-spy estimator with pruning performs as well or better than the `ML' estimator (which is not actually ML over general graph structures). Moreover, by plotting the pruned graph $\mathcal G_a$, we observed that $\mathcal G_a$ generally has very few honest nodes (about 10) when the fraction of spies is about 40; the pruned graph size decreases with spy fraction. 
 We want to highlight that the first-spy estimator with pruning always returns a node from $\mathcal G_a$ by construction.  Moreover, the first-spy estimator achieves comparable accuracy to the ML estimator with orders of magnitude less computation; the first-spy estimator has complexity $O(1)$ as compared to $O(N^3)$ for the ML estimator. As such, one of the main takeaways from our study is that when direction-of-infection information is available and the graph not tree-structured, there is no reason to use the estimator from \cite{pinto}; the first-spy estimator will do as well or better, while using only a fraction of the computation. 
 
-Conversely, when there is no direction-of-infection information, the first-spy estimator performs quite poorly compared the estimator from \cite{pinto}. Even the hop distances, illustrated in Figures \ref{fig:ba_hops} and \ref{fig:ba_hops_p1}, are significantly higher than the other tested estimators for the first-spy estimator without pruning. As such, the Pinto \emph{et al.} estimator may be quite powerful when there is no direction information available; this problem setting was not explored in their original paper.
+Conversely, when there is no direction-of-infection information, the first-spy estimator performs poorly compared the estimator from \cite{pinto}. Even the hop distances from the true source, illustrated in Figures \ref{fig:ba_hops} and \ref{fig:ba_hops_p1}, are significantly higher for the first-spy estimator without pruning. The Pinto \emph{et al.} estimator appears to be powerful even when there is no direction information available; this problem setting was not explored in their original paper. Indeed, in the paper's original setting of a disease outbreak, the sampled observers (i.e., the spies in our problem) are unlikely to know who infected them. As such, it is important to understand how these estimators perform without direction information. Unfortunately, this also implies that deanonymization may be feasible with only a small fraction of spy nodes---even when direction-of-infection information is unavailable.
 
 
 
