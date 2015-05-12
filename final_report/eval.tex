@@ -10,7 +10,7 @@ At the start of a simulation run, a certain percentage of the nodes are compromi
 
 \subsection{Estimator validation}
 We started by attempting to replicate the estimator results in \cite{pinto}. 
-In this replication process, we encountered four primary mistakes or omissions in \cite{pinto} that affected our estimation accuracy; some of these were easy to correct once we identified them, others were not. All equation numbers in this list are with respect to \cite{pinto} and the corresponding supplementary materials.
+In this replication process, we encountered four primary mistakes or omissions in \cite{pinto} that affected our estimation accuracy; some of these were easy to correct once we identified them, others were not. All equation numbers in this list are with respect to \cite{pinto} and the corresponding supplementary materials~\cite{supplement}.
 \begin{enumerate}
 \item There is a typo in equation (2), which describes how to compute the observed delay vector. It should say $[\boldsymbol d]_k=t_{k+1}-t_1$ instead of $[\boldsymbol d]_k=t_{k+1}-t_k$. This is a small but important typo in the description of the estimator that leads to incorrect likelihoods. 
 \item Algorithm 2 of the supplemental materials describes how to compute likelihoods for general graphs. In step 6, it should say ``compute the source likelihood using equation (4) for node $s$.", rather than ``using equation (7)." This is because over general graphs, the covariance matrix $\Lambda_s$ is not identical for all nodes, which causes the simplifications in equation (7) to be invalid. As such, the likelihoods should be computed using the more general equation (4). This error initially led to incorrect likelihood computations in our code.
