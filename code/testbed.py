@@ -37,6 +37,7 @@ if __name__ == '__main__':
         graph_size = 'N' + str(num_nodes) + '_BA'
         directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
         for i in range(trials):
+            i += 1000
             if (i % 50) == 0:
                 print('Trial ',i)
             parser = Parser( directory + 'output' + str(i+1))
@@ -67,7 +68,7 @@ if __name__ == '__main__':
                 print('NO BUENO')
                 num_singular += 1
                 continue
-            dist_opt_nodir = networkx.shortest_path_length(opt.graph,source, opt_est)
+            dist_opt_nodir = networkx.shortest_path_length(opt.graph,source, opt_nodir_est)
             if dist_opt_nodir == 0:
                 pd_opt_nodir += 1
             opt_nodir_distances.append(dist_opt_nodir)
