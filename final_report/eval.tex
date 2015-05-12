@@ -16,7 +16,22 @@ In this replication process, we encountered four primary mistakes or omissions i
 \item Algorithm 2 of the supplemental materials does not explain how to prune graphs that are not tree-structured. Additionally, it does not describe how to incorporate the direction of infection into estimation. These omissions collectively have a significant impact the likelihoods obtained by the algorithm, and we suspect this is partially responsible for our inability to exactly reproduce their results.
 \item The parameter specifications of the random graphs in Table 1 are not given. Specifically, the Barabasi-Albert parameter is not given. We therefore tried a range of different parameters.
 \end{enumerate}
-For point 3, the corresponding author of \cite{pinto} sent us part of his simulation code two days before the project due date, so we have revised our discussion to reflect what we learned from reading his code. 
+For point 3, the corresponding author of \cite{pinto} sent us part of his simulation code two days before the project due date, so we have revised our discussion to reflect what we learned from reading his code. Namely, his code helped explain how they prune graphs that are not tree-structured. 
+
+For general graphs, pruning takes place in two steps: 1) For each spy node, remove all graph edges that were not used to transmit the message to the spy. 2) Step 1 will leave the graph disconnected; keep the connected component that contains the spy with the earliest timestamp. The resultant subgraph is called $\mathcal G_a$, and the optimization in equation \ref{eq:general} occurs as normal over the nodes of $\mathcal G_a$ (rather than $\mathcal T_a$). 
+
+On a tree, this form of pruning corresponds to only using timestamps from the nearest spies; if two spies lie on the same path (as defined by the direction of message transmission), then the latter spy's information will be discarded. For example, in Figure \ref{fig:pruning}, $o_2$'s timestamp $t_2$ would be discarded, because the edge between $o_1$ and $o_2$ would be cut. This is a reasonable approach, because conditioned on $o_1$'s information, $t_2$ is independent and therefore cannot improve the estimate. 
+
+However, on a loopy graph, this approach discards viable message paths, thereby placing undue weight paths that might otherwise have a very low likelihood. For example, consider the graph in Figure \ref{fig:pruning2}. Even though the most likely path for the message is $0\rightarrow o_1\rightarrow 3 \rightarrow o_2$, pruning removes the edge between $o_1$ and node $3$, so the estimator acts as if the message traversed the path $0\rightarrow 4\rightarrow 5 \rightarrow 6 \rightarrow 7 \rightarrow 3 \rightarrow o_2$. Although this simplification is not strictly correct, we will demonstrate that it performs well in practice. Indeed, our simulation results suggest that the high accuracy levels reported in \cite{pinto} over general graphs are mostly due to pruning, not the proposed estimator.
+\begin{figure}[h]
+\centering
+\includegraphics[width= 3in]{figures/pruning2}
+\caption{The pruning used in \cite{pinto} can lead to false likelihood computations over loopy graphs; the scheme discounts the possibility of a spy passing the message to another spy.
+%Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
+}
+\label{fig:pruning2}
+%\vspace*{-0.4in}
+\end{figure}
 
 \subsubsection{Trees}
 We first tested the estimator on trees. As assumed in \cite{pinto}, each node transmits the message to its neighbors with an iid delay that is distributed according to $\mathcal N(2,0.5)$. Figure \ref{fig:pd_vs_spies} shows the probability of detection as a function of the fraction of spies over a 3-regular tree. We ran the simulation for 8 timesteps, leading to an average graph size of 75 nodes. Each datapoint is averaged over 4500 trials. Although \cite{pinto} does not provide simulation results over trees, we observe high detection probabilities for relatively low fractions of spies; with only 5 percent of the nodes spying, the source gets caught with probability 0.3. Note also that the ML estimator performs equally well with or without pruning (the plot lines are jittered to show both); this is because over trees, pruning never removes feasible candidates nodes or edges. We will see later that pruning over loopy graphs can remove feasible edges, and thereby impact the probability of detection. Figure \ref{fig:hops_vs_spies} shows the corresponding hop distances between the estimated source and the true source. We observe that with as few as 30 percent spies, this average hop distance is less than 0.1, whereas the diameter of the graph is 8. 

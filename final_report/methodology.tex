@@ -28,7 +28,7 @@ We study the ability of this adversary to deanonymize users through simulation. 
 \item[Location of spies:] We hypothesize that selecting spies as high-degree nodes will increase the probability of detection, as popular nodes are more likely to see and propagate the message. However, this may be unrealistic in practice, as popular individuals (i.e., high-degree nodes) may hold more social leverage and may therefore resist recruitment attempts. A uniform distribution of spy nodes seems feasible for an adversary with moderate but limited resources. 
 \item[Propagation latency:] The propagation latencies $\theta_{ij}$ are likely to depend on many factors, such as the popularity of the social network, the habits of its users, and the application platform (e.g., mobile vs. desktop).
 In simulation, we model the propagation latency in two ways: using a Gaussian distribution with a high mean-to-standard-deviation ratio, and a geometric random variable. 
-\item[Estimator:] To optimize probability of detection, i.e. $P(\hat v=v^*)$, the adversary would like to use a maximum-likelihood (ML) estimator. However, ML estimators are not known for general graph structures and propagation delay models. We therefore try different methods of estimation. The majority of our effort goes towards adapting the observer model~\cite{pinto} to our spy nodes setting.
+\item[Estimator:] To maximize probability of detection, i.e. $P(\hat v=v^*)$, the adversary should use a maximum-likelihood (ML) estimator. However, computationally-efficient ML estimators are not known for general graph structures and propagation delay models. We therefore try different methods of estimation. The majority of our effort goes towards adapting the estimator in~\cite{pinto} to our spy-based adversarial model.
 \end{description}
 
 \subsection{Estimators}
@@ -51,23 +51,25 @@ The next term is the expected delay, which is the delay that one \emph{should} o
 \end{equation}
 where $|P(u, v)|$ denotes the number of edges on the path that connects nodes $u$ and $v$. Finally, we define a scaled covariance matrix, which represents the covariance of the jointly-gaussian delay random variable:
 \begin{equation}
-  \boldsymbol{\Lambda}_{k, i} = \begin{cases}
+  (\boldsymbol{\Lambda}_s)_{k, i} = \begin{cases}
     |P(o_1, o_{k+1})| & \text{if $k = i$} \\
     |P(o_1, o_{k+1}) \cap P(o_1, o_{i+1})| & \text{if $k \neq i$}.
   \end{cases}
 \end{equation}
+$\boldsymbol \Lambda_s$ does not depend on $s$ when $\mathcal G$ is a tree. However, for general graphs, there may be multiple paths between a pair of nodes. As such, \cite{pinto} suggests that all paths should be computed over a breadth-first-search tree rooted at the candidate node $s$.
+
 The authors use these terms to construct a source estimator for general trees:
 \begin{equation}
 \label{eq:general}
 \hat{s} = \arg\max_{s \in \mathcal T_{a}} \dfrac{\exp(-\frac{1}{2} (\boldsymbol{d} - \boldsymbol{\mu}_{s})^{T} \boldsymbol{\Lambda}_s^{-1} (\boldsymbol{d} - \boldsymbol{\mu}_s) }{|\boldsymbol{\Lambda}_s|^{1/2}}.
 \end{equation}
 
-$\mathcal T_a$ denotes the \emph{pruned} tree. Pruning refers to the process of removing nodes that could not have possibly generated the observed information. For instance, consider Figure \ref{fig:pruning}; the spies $o_1$ and $o_2$ both observe that they received the message from node 3. Therefore, node 1 could not possibly have been the source, and we can prune it from the tree. In this example, the pruned tree $\mathcal T_a$ consists solely of node 3. For trees, this pruning process does not change the probability of detection; it only speeds up estimation. However, we will show later that for loopy graphs, pruning significantly increases the probability of detection. In scenarios where direction information is not available (as in our application), the estimator in \cite{pinto} achieves much lower accuracies.
+$\mathcal T_a$ denotes the \emph{pruned} tree. Pruning refers to the process of removing nodes from $\mathcal G$ that could not have possibly generated the observed information. For instance, consider Figure \ref{fig:pruning}; the spies $o_1$ and $o_2$ both observe that they received the message from node 3. Therefore, node 1 could not possibly have been the source, and we can prune it from the tree. In this example, the pruned tree $\mathcal T_a$ consists solely of node 3. For trees, this pruning process does not change the probability of detection; it only speeds up estimation. However, we will show later that for loopy graphs, pruning significantly increases the probability of detection. In scenarios where direction information is not available (as in our application), we cannot prune, and therefore have lower detection accuracy.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width = 3.2in]{figures/pruning}
-\caption{Directionality information enables the adversary to prune the graph of nodes that could have plausibly generated the spies' observations. In this example, the pruned tree $\mathcal T_a$ consists only of node 3.}
+\caption{Directionality information enables the adversary to remove nodes that could not have generated the spies' observations. In this example, the pruned tree $\mathcal T_a$ consists only of node 3.}
 \label{fig:pruning}
 %\vspace*{-0.4in}
 \end{figure}
@@ -81,4 +83,4 @@ Equation \ref{eq:general} can be applied to general graphs as a heuristic estima
 because $\Lambda_s$ is constant for all candidate nodes. This estimator is provably optimal for tree-structured graphs.
 
 \subsubsection{Nearest-spy estimator}
-We also tested a heuristic estimator, which does not make use of the full available information. This heuristic estimator uses only the first spy to receive the message, i.e., the spy with the smallest timestamp. Without loss of generality, assume that spy is $o_1$. The estimator chooses $\hat s$ as a uniformly-selected honest neighbor of $o_1$. This estimator does not use direction information to prune candidates. A trivial extension would be to use direction information and pick $\hat s$ as the node that delivered the message to the first spy. We use this nearest-spy estimator with pruning to compare our results with those of \cite{pinto}, which make use of direction information. 
+We also tested a heuristic baseline estimator, which uses only partial spy information. This estimator considers only the first spy to receive the message, i.e., the spy with the smallest timestamp. Without loss of generality, assume that spy is $o_1$. The estimator chooses $\hat s$ uniformly among the honest neighbors of $o_1$. This estimate does not use direction information to prune candidates. A trivial extension \emph{with pruning} instead chooses the node that delivered the message to the first spy. We compare this nearest-spy estimator to that in \cite{pinto}, which also makes use of direction information. 
