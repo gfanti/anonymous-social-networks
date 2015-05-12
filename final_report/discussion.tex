@@ -3,7 +3,7 @@
 The results in \S\ref{sec:eval} suggest two main takeaway messages, which apply when the underlying graph is loopy and exhibits a power-law degree distribution:
 \begin{itemize}
 \item If the adversary has direction information for spy nodes, the first-spy estimator performs as well or better than the ML estimator, while using a small fraction of the computation.
-\item If the adversary does not have access to direction information, the probability of deanonymization can decrease by as much as 50 percent, depending on the graph structure. In this case, the ML estimator exhibits significantly higher deanonymization accuracy than the first-spy estimator.
+\item If the adversary does not have access to direction information, the probability of deanonymization can decrease by as much as 50 percent, depending on the graph structure. In the absence of direction information, the ML estimator exhibits significantly higher deanonymization accuracy than the first-spy estimator.
 \end{itemize} 
 
 %There are various aspects of ML estimator that do not make sense algorithmically. 
@@ -12,6 +12,10 @@ The results in \S\ref{sec:eval} suggest two main takeaway messages, which apply 
 %\item The estimator gives a log likelihood of 0 if a node $s$ is equidistant from all spy nodes, even if the timing information shows that $s$ is unlikely to be the true source. For example in Fig.~\ref{??}, we see that the ~~~~
 %\end{itemize}
 
-The estimator's pruning process is questionable. Given a graph $G$, the estimator prunes the graph using the direction of the propagation message. For every spy node $n_s$ that receives a message, the node prunes all edges that are not the propagation edge. After the pruning is done, the estimator discards all disconnected components except for the one containing the spy node with the earliest delay. After the pruning is done, the maximum likelihood estimator is run on the graph.
+%There are some The estimator's pruning process is questionable. Given a graph $G$, the estimator prunes the graph using the direction of the propagation message. For every spy node $n_s$ that receives a message, the node prunes all edges that are not the propagation edge. After the pruning is done, the estimator discards all disconnected components except for the one containing the spy node with the earliest delay. After the pruning is done, the maximum likelihood estimator is run on the graph.
+%
+%This is pruning process is similar to the first-spy estimator, which picks a random neighbor that is closest to the 
 
-This is pruning process is similar to the first-spy estimator, which picks a random neighbor that is closest to the 
+The deanonymization rates reported in our plots and tables are upper bounds on what an adversary could achieve by selecting spy nodes uniformly at random. In our experiments, we assumed that nodes always `like' the message, so there is no asymmetry in the spread of the message. We also assumed that the adversary knows the entire graph structure, which may not be the case in practice. Nonetheless, our Facebook trials suggest that an adversary could plausibly deanonymize message senders with 10 percent accuracy by corrupting only 5 percent of nodes. This is a fairly high return on investment, and could be economically feasible for the adversary. 
+
+Although we used a Gaussian propagation delay for all simulations, this model is actually moderately realistic for small fractions of spies. As long as the per-edge delay random variable has finite moments, the sum of several such iid random variables will be well-approximated by a Gaussian due to the Central Limit Theorem. When the fraction of spies is low, pairs of spies will be a few hops apart on average, so the overall delay can be modeled as the sum of several delay random variables, i.e., approximately Gaussian. For this reason, we do not believe that our propagation model is a primary source of bias in our results, at least when the spy fraction is small.
