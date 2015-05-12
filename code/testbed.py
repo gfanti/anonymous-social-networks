@@ -12,14 +12,16 @@ if __name__ == '__main__':
     pds_opt = []
     pds_opt_nodir = []
     pds_spy = []
+    pds_spy_nodir = []
     pds_rand = []
     hops_opt = []
     hops_opt_nodir = []
     hops_spy = []
+    hops_spy_nodir = []
     hops_rand = []
     percents_malicious = [5,10,20,30,40,50,60,70,80,90]
     # percents_malicious = [5]
-    trials = 1000
+    trials = 2000
     num_nodes = 100
 
     for percent_malicious in percents_malicious:
@@ -27,17 +29,18 @@ if __name__ == '__main__':
         pd_opt_nodir = 0
         pd_rand = 0
         pd_spy = 0
+        pd_spy_nodir = 0
         opt_distances = []
         opt_nodir_distances = []
         entropy_distances = []
         rand_distances = []
         spy_distances = []
+        spy_nodir_distances = []
         num_singular = 0
         # percent_malicious = 90
         graph_size = 'N' + str(num_nodes) + '_BA'
         directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
         for i in range(trials):
-            i += 1000
             if (i % 50) == 0:
                 print('Trial ',i)
             parser = Parser( directory + 'output' + str(i+1))
@@ -113,6 +116,18 @@ if __name__ == '__main__':
             spy_distances.append(spy_dist)
             if spy_dist == 0:
                 pd_spy += 1
+                
+            # Without direction info
+            spy_nodir_est = spy.estimate_source(use_directions=False)
+            if spy_nodir_est == -1:
+                print('NO BUENO')
+                num_singular += 1
+                continue
+            spy_nodir_dist = networkx.shortest_path_length(opt.graph,source, spy_nodir_est)
+            # print('Nearest-spy estimate is: ', spy_est,'True source is :', source,'Distance from the true source is :', spy_dist)
+            spy_nodir_distances.append(spy_nodir_dist)
+            if spy_nodir_dist == 0:
+                pd_spy_nodir += 1
             
         # # print('The fraction of singular matrices is ', num_singular / float(trials))
         # # print('Distances are: ', opt_distances)
@@ -129,11 +144,15 @@ if __name__ == '__main__':
         pds_opt_nodir.append(float(pd_opt_nodir) / trials)
         print('the probabiliy of detection without direction info is ',float(pd_opt_nodir) / trials)
         pds_spy.append(float(pd_spy) / trials)
+        print('the probabiliy of spy detection is ',float(pd_spy) / trials)
+        pds_spy_nodir.append(float(pd_spy_nodir) / trials)
+        print('the probabiliy of spy detection without direction info is ',float(pd_spy_nodir) / trials)
         pds_rand.append(float(pd_rand) / trials)
         
         hops_opt.append(sum(opt_distances)/float(len(opt_distances)))
         hops_opt_nodir.append(sum(opt_nodir_distances)/float(len(opt_nodir_distances)))
         hops_spy.append(sum(spy_distances)/float(len(spy_distances)))
+        hops_spy_nodir.append(sum(spy_nodir_distances)/float(len(spy_nodir_distances)))
         hops_rand.append(sum(rand_distances)/float(len(rand_distances)))
         
     
@@ -143,10 +162,12 @@ if __name__ == '__main__':
                                      pds_opt = pds_opt,
                                      pds_opt_nodir = pds_opt_nodir,
                                      pds_spy = pds_spy,
+                                     pds_spy_nodir = pds_spy_nodir,
                                      pds_rand = pds_rand,
                                      hops_opt = hops_opt,
                                      hops_opt_nodir = hops_opt_nodir,
                                      hops_spy = hops_spy,
+                                     hops_spy_nodir = hops_spy_nodir,
                                      hops_rand = hops_rand))
 
     
