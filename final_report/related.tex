@@ -1,16 +1,16 @@
 \section{Related Work}
 
-\subsection{Anonymous Social Networks} 
-Recent years have seen the rise of a new class of social network built upon anonymous microblogging.
-Such networks, including Secret \cite{secret}, Whisper \cite{whisper}, and Yik Yak \cite{yikyak}, enable users to share short messages with their friends without including any authorship information in the metadata. 
-Whenever a user `likes' an incoming message, that message passes to the user's friends.
-Under this spreading pattern, messages propagate across the network like an epidemic.
-While content on these social networks is anonymous to individual network users, service providers store all communications (and authorship information) on centralized servers.
-The networks are therefore not anonymous to service providers themselves, as well as government agencies or hackers who obtain access to these centralized servers.
-Our work considers a different adversary that is more powerful than a single user, but less powerful than a government agency or service provider.
+%\subsection{Anonymous Social Networks} 
+%Recent years have seen the rise of a new class of social network built upon anonymous microblogging.
+%Such networks, including Secret \cite{secret}, Whisper \cite{whisper}, and Yik Yak \cite{yikyak}, enable users to share short messages with their friends without including any authorship information in the metadata. 
+%Whenever a user `likes' an incoming message, that message passes to the user's friends.
+%Under this spreading pattern, messages propagate across the network like an epidemic.
+%While content on these social networks is anonymous to individual network users, service providers store all communications (and authorship information) on centralized servers.
+%The networks are therefore not anonymous to service providers themselves, as well as government agencies or hackers who obtain access to these centralized servers.
+%Our work considers a different adversary that is more powerful than a single user, but less powerful than a government agency or service provider.
 %Because this class of social networks is relatively new, to the best of our knowledge, no existing research exists on deanonymizing them.
 
-These social networks are not the gold standard for anonymous communication. In the rest of this section, we will discuss the state-of-the-art in anonymous broadcast communication, and explain why those methods have not gained traction outside the research community.
+Existing anonymous social networks, like Secret \cite{secret}, Whisper \cite{whisper}, and Yik Yak \cite{yikyak}, enable users to share short messages with their friends without including any authorship information in the metadata.  However, these are not the gold standard for anonymous communication. In the rest of this section, we will discuss the state-of-the-art in anonymous broadcast communication, and explain why those methods have not gained traction outside the research community.
 A wide swath of literature---spanning a few decades---considers the problem of communicating anonymously.
 Much of this work focuses on \emph{point-to-point} communication, offering properties like sender anonymity, receiver anonymity, and/or sender-receiver unlinkability. 
 Work in this area includes Chaum's mix-nets \cite{chaum1981untraceable}, Tor \cite{tor}, Tarzan \cite{tarzan}, Crowds \cite{reiter1998crowds}, and Herbivore \cite{goel2003herbivore}, just to name a few.
@@ -54,7 +54,7 @@ A more sophisticated approach~\cite{backstrom2007wherefore} considers what happe
 The attacks presented in this paper assume that the attackers can construct new nodes a network graph $G$ before it is anonymized. These fake nodes attempt to communicate with a list of targeted honest nodes and these communications are recorded as edges. After the graph is anonymized, the attackers will attempt to identify the fake nodes along with the targeted nodes. 
 The aim of our project is a little different. We are attempting to deanonymize an online network that is already anonymized to a certain extent when the attack begins. A subset of the nodes in the network are assumed compromised, and the attackers will leverage anonymous messages to reconstruct the social network graph as well as re-identifying nodes. 
 
-One recent~\cite{narayanan2009anonymizing} approach focuses on deanonymizing large scale social networks by developing a very generic re-identification algorithm. Social graph anonymizaion usually consists of releasing some partial information on a \emph{sanitized} version of the graph. 
+One recent~\cite{narayanan2009anonymizing} approach focuses on deanonymizing large scale social networks by developing a very generic re-identification algorithm. Social graph \\ anonymization usually consists of releasing some partial information on a \emph{sanitized} version of the graph. 
 The attackers are assumed to know some auxiliary information about the original graph $S$. This auxiliary information, designated as $S_{AUX}$, is a different network such that $S_{AUX}$ and $S$ partially overlap. Using the auxiliary information, the attackers can use an algorithm to deanonymize the sanitized version of $S$, $S_{SAN}$.
 The algorithm consists of two steps, seed identification and propagation. Seed identification attempt to find a small amount of users that are present both in the anonymized network and the auxiliary graph. The propagation stage is an iterative process that finds new mappings between $S_{SAN}$ and $S_{AUX}$. This paper's analysis is very informative, and the generic algorithm is very applicable. However, it does not attempt to address the issue of tracking specific messages back to their original sources. We attempt to address only message deanonymization, in which we attempt to learn the the original source of a message. In addition, we would like to analyze and quantify deanonymization over different network topologies.
 
