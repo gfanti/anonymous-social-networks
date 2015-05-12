@@ -61,12 +61,12 @@ The authors use these terms to construct a source estimator for general trees:
 \hat{s} = \arg\max_{s \in \mathcal T_{a}} \dfrac{\exp(-\frac{1}{2} (\boldsymbol{d} - \boldsymbol{\mu}_{s})^{T} \boldsymbol{\Lambda}_s^{-1} (\boldsymbol{d} - \boldsymbol{\mu}_s) }{|\boldsymbol{\Lambda}_s|^{1/2}}.
 \end{equation}
 
-$\mathcal T_a$ denotes the \emph{pruned} tree. Pruning refers to the process of removing nodes from $\mathcal G$ that could not have possibly generated the observed information. For instance, consider Figure \ref{fig:pruning}; the spies $o_1$ and $o_2$ both observe that they received the message from node 3. Therefore, node 1 could not possibly have been the source, and we can prune it from the tree. In this example, the pruned tree $\mathcal T_a$ consists solely of node 3. For trees, this pruning process does not change the probability of detection; it only speeds up estimation. However, we will show later that for loopy graphs, pruning significantly increases the probability of detection. In scenarios where direction information is not available (as in our application), we cannot prune, and therefore have lower detection accuracy.
+$\mathcal T_a$ denotes the \emph{pruned} tree. Pruning refers to the process of removing nodes from $\mathcal G$ that could not have possibly generated the observed information. For instance, consider Figure \ref{fig:pruning}; the spies $o_1$ and $o_2$ both observe that they received the message from the left. Therefore, node 3 could not possibly have been the source, and we can prune it from the tree. In this example, the pruned tree $\mathcal T_a$ consists solely of node 0. For trees, this pruning process does not change the probability of detection; it only speeds up estimation. However, we will show later that for loopy graphs, pruning significantly increases the probability of detection. In scenarios where direction information is not available (as in our application), we cannot prune, and therefore have lower detection accuracy.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width = 3.2in]{figures/pruning}
-\caption{Directionality information enables the adversary to remove nodes that could not have generated the spies' observations. In this example, the pruned tree $\mathcal T_a$ consists only of node 3.}
+\caption{Directionality information enables the adversary to remove nodes that could not have generated the spies' observations. In this example, the pruned tree $\mathcal T_a$ consists only of node 0.}
 \label{fig:pruning}
 %\vspace*{-0.4in}
 \end{figure}

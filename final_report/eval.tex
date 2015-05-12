@@ -26,8 +26,8 @@ On a tree, this pruning procedure corresponds to only using timestamps from the 
 However, on a loopy graph, this approach discards viable message paths, thereby placing undue weight paths that might otherwise have a very low likelihood. For example, consider the graph in Figure \ref{fig:pruning2}. Even though the most likely path for the message is $0\rightarrow o_1\rightarrow 3 \rightarrow o_2$, pruning removes the edge between $o_1$ and node $3$, so the estimator acts as if the message traversed the path $0\rightarrow 4\rightarrow 5 \rightarrow 6 \rightarrow 7 \rightarrow 3 \rightarrow o_2$---a path with comparatively low likelihood. Although this pruning approach is not strictly correct, we will demonstrate that it performs well in practice. Indeed, our simulation results suggest that the high accuracy levels reported in \cite{pinto} over general graphs are in large part due to pruning.
 \begin{figure}[h]
 \centering
-\includegraphics{figures/pruning2}
-\caption{The pruning used in \cite{pinto} can lead to false likelihood computations over loopy graphs; the scheme discounts the possibility of a spy passing the message to another spy.
+\includegraphics[width=3in]{figures/pruning2}
+\caption{The pruning used in \cite{pinto} can lead to false likelihood computations over loopy graphs; their pruning scheme ignores the possibility of a spy passing the message to another spy.
 %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
 }
 \label{fig:pruning2}
