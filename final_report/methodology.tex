@@ -62,7 +62,16 @@ The authors use these terms to construct a source estimator for general trees:
 \hat{s} = \arg\max_{s \in \mathcal T_{a}} \dfrac{\exp(-\frac{1}{2} (\boldsymbol{d} - \boldsymbol{\mu}_{s})^{T} \boldsymbol{\Lambda}_s^{-1} (\boldsymbol{d} - \boldsymbol{\mu}_s) }{|\boldsymbol{\Lambda}_s|^{1/2}}.
 \end{equation}
 
-$\mathcal T_a$ denotes the \emph{pruned} tree. Pruning refers to the process of removing nodes that could not have possibly generated the observed information. For instance, consider the following 
+$\mathcal T_a$ denotes the \emph{pruned} tree. Pruning refers to the process of removing nodes that could not have possibly generated the observed information. For instance, consider Figure \ref{fig:pruning}; the spies $o_1$ and $o_2$ both observe that they received the message from node 3. Therefore, node 1 could not possibly have been the source, and we can prune it from the tree. In this example, the pruned tree $\mathcal T_a$ consists solely of node 3. For trees, this pruning process does not change the probability of detection; it only speeds up estimation. However, we will show later that for loopy graphs, pruning significantly increases the probability of detection. In scenarios where direction information is not available (as in our application), the estimator in \cite{pinto} achieves much lower accuracies.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 3.2in]{figures/pruning}
+\caption{Directionality information enables the adversary to prune the graph of nodes that could have plausibly generated the spies' observations. In this example, the pruned tree $\mathcal T_a$ consists only of node 3.}
+\label{fig:pruning}
+%\vspace*{-0.4in}
+\end{figure}
+
 
 Equation \ref{eq:general} can be applied to general graphs as a heuristic estimator. However, if the underlying graph is tree-structured, equation \ref{eq:general} simplifies to
 \begin{equation}
@@ -72,4 +81,4 @@ Equation \ref{eq:general} can be applied to general graphs as a heuristic estima
 because $\Lambda_s$ is constant for all candidate nodes. This estimator is provably optimal for tree-structured graphs.
 
 \subsubsection{Nearest-spy estimator}
-We also tested a heuristic estimator, which does not make use of the full available information. This estimator considers the first spy to receive the message. Without loss of generality, assume that spy is $o_1$. The estimator chooses an honest neighbor of that spy uniformly at random, and uses that as the estimate $\hat s$. This estimator does not use direction information. A trivial extension to this estimator uses direction estimation and picks $\hat s$ as the node that delivered the message to the first spy. We use this directionality information in comparing our results with those of \cite{pinto}, which make use of direction information.
+We also tested a heuristic estimator, which does not make use of the full available information. This heuristic estimator uses only the first spy to receive the message, i.e., the spy with the smallest timestamp. Without loss of generality, assume that spy is $o_1$. The estimator chooses $\hat s$ as a uniformly-selected honest neighbor of $o_1$. This estimator does not use direction information to prune candidates. A trivial extension would be to use direction information and pick $\hat s$ as the node that delivered the message to the first spy. We use this nearest-spy estimator with pruning to compare our results with those of \cite{pinto}, which make use of direction information. 

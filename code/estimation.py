@@ -344,7 +344,7 @@ class FirstSpyEstimator(Estimator):
     def __init__(self, adjacency, malicious_nodes, timestamps, infectors = None):
         super(FirstSpyEstimator, self).__init__(adjacency, malicious_nodes, timestamps, infectors = infectors)
         
-    def estimate_source(self):
+    def estimate_source(self, use_directions=True):
         # Picks a random neighbor of the first spy to receive the message
         # print(self.timestamps)
         # print('timestamps 0',self.timestamps[0],self.malicious_nodes[0],'adj:',self.adjacency[self.malicious_nodes[0]])
@@ -356,13 +356,15 @@ class FirstSpyEstimator(Estimator):
         infectors = [item[2] for item in points]
         
         for (spy,infector) in zip(spies,infectors):
-            # options = [option for option in self.adjacency[spy] if option not in spies]
-            # if options:
-                # estimate = random.choice(options)
-                # break
-            if infector not in spies:
-                estimate = infector
-                break
+            if use_directions:
+                if infector not in spies:
+                    estimate = infector
+                    break
+            else:
+                options = [option for option in self.adjacency[spy] if option not in spies]
+                if options:
+                    estimate = random.choice(options)
+                    break
         return estimate
         
 class SumDistanceEstimator(Estimator):
