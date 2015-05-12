@@ -35,7 +35,7 @@ However, on a loopy graph, this approach discards viable message paths, thereby 
 
 \subsubsection{Trees}
 We first tested the estimator on trees. As assumed in \cite{pinto}, each node transmits the message to its neighbors with an iid delay that is distributed according to $\mathcal N(2,0.5)$. Figure \ref{fig:pd_vs_spies} shows the probability of detection as a function of the fraction of spies over a 3-regular tree. We ran the simulation for 8 timesteps, leading to an average graph size of 75 nodes. Each datapoint is averaged over 4500 trials. Although \cite{pinto} does not provide simulation results over trees, we observe high detection probabilities for relatively low fractions of spies; with only 5 percent of the nodes spying, the source gets caught with probability 0.3. Note also that the ML estimator performs equally well with or without pruning (the plot lines are jittered to show both); this is because over trees, pruning never removes feasible candidates nodes or edges. We will see later that pruning over loopy graphs can remove feasible edges, and thereby impact the probability of detection. 
-For reference, Figure \ref{fig:pd_vs_spies} also shows the probability of detection by the nearest-spy estimator. The ML estimator clearly outperforms the nearest-spy estimator, which is a good sanity check. Moreover, the nearest-spy estimator with pruning closely follows the theoretically-expected probability of detection; for a fraction of spies $p$, this probability grows as $P(\hat v=v^*)=1-(1-p)^d$ where $d$ denotes the degree of the underlying tree.
+For reference, Figure \ref{fig:pd_vs_spies} also shows the probability of detection by the first-spy estimator. The ML estimator clearly outperforms the first-spy estimator, which is a good sanity check. Moreover, the first-spy estimator with pruning closely follows the theoretically-expected probability of detection; for a fraction of spies $p$, this probability grows as $P(\hat v=v^*)=1-(1-p)^d$ where $d$ denotes the degree of the underlying tree.
 Figure \ref{fig:hops_vs_spies} shows the corresponding hop distances between the estimated source and the true source. We observe that with as few as 30 percent spies, this average hop distance is less than 0.1; the diameter of the graph is 8 hops. 
 \begin{figure}
 \centering
@@ -58,26 +58,37 @@ Figure \ref{fig:hops_vs_spies} shows the corresponding hop distances between the
 \subsection{Barabasi-Albert graphs}
 We next considered random graphs with loops. \cite{pinto} considers a number of random graph structures, including Apollonian, Erdos-Renyi, and Barabasi-Albert. Due to time constraints, we only considered the latter. However, as mentioned earlier, we did not have access to the parameters used to generate the graphs in \cite{pinto}. To verify that we computed the estimator correctly, we considered a range of different parameters, and show that our results are at least plausibly consistent with the results provided in \cite{pinto}.
 
-Figure \ref{fig:ba_graphs} shows the probability of detection as a function of the fraction of spies for Barabasi-Albert graphs with $N=100$ nodes. We varied the minimum degree $d$ from 1 to 5. Each datapoint is averaged over 2000 trials. First, the figure illustrates that our numbers are at least plausible given the measurement provided in \cite{pinto}. Given the strong performance on trees, we believe that our estimator implementation is correct. %It also gives the right numbers when we compute the likelihoods for small graphs by hand. 
-However, note that the nearest-spy estimator with pruning performs as well or better than the `ML' estimator (which is not actually ML over general graph structures). Moreover, by plotting the pruned graph $\mathcal G_a$, we observed that $\mathcal G_a$ generally has very few honest nodes (about 10) when the fraction of spies is about 40; the pruned graph size decreases with spy fraction. Finally, the nearest-spy estimator with pruning always returns a node from $\mathcal G_a$ by construction.  This suggests that \emph{graph-pruning} is primarily responsible for the high accuracy rates in \cite{pinto} over general graphs, not the estimator itself. Moreover, the first-spy estimator achieves comparable accuracy to the ML estimator with orders of magnitude less computation; the first-spy estimator has complexity $O(1)$ as compared to $O(N^3)$ for the ML estimator. 
+Figures \ref{fig:ba_graph} and \ref{fig:ba_graph_p1} show the probability of detection as a function of the fraction of spies for Barabasi-Albert graphs with $N=100$ nodes. We considered a minimum degree $m$ of 1 and 5. Each datapoint is averaged over 2000 trials. The figures illustrate that our numbers are at least plausible given the measurement provided in \cite{pinto}, albeit slightly low. We believe that over graphs with a higher minimum degree (e.g., $m=6$), the optimal estimator could reach 90 percent accuracy with 41 percent spies. Given the estimator's strong performance on trees, we believe that our estimator implementation is consistent with that in \cite{pinto}. %It also gives the right numbers when we compute the likelihoods for small graphs by hand. 
 
-\begin{figure}
-\centering
-\includegraphics[height = 2.4in]{figures/ba_graphs}
-\caption{Placeholder. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
-}
-\label{fig:ba_graphs}
-%\vspace*{-0.4in}
-\end{figure}
+Note that the first-spy estimator with pruning performs as well or better than the `ML' estimator (which is not actually ML over general graph structures). Moreover, by plotting the pruned graph $\mathcal G_a$, we observed that $\mathcal G_a$ generally has very few honest nodes (about 10) when the fraction of spies is about 40; the pruned graph size decreases with spy fraction. 
+We want to highlight that the first-spy estimator with pruning always returns a node from $\mathcal G_a$ by construction.  Moreover, the first-spy estimator achieves comparable accuracy to the ML estimator with orders of magnitude less computation; the first-spy estimator has complexity $O(1)$ as compared to $O(N^3)$ for the ML estimator. As such, one of the main takeaways from our study is that when direction-of-infection information is available and the graph not tree-structured, there is no reason to use the estimator from \cite{pinto}; the first-spy estimator will do as well or better, while using only a fraction of the computation. 
 
-\begin{figure}
-\centering
-\includegraphics[height = 2.4in]{figures/ba_hops}
-\caption{Placeholder. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
-}
+Conversely, when there is no direction-of-infection information, the first-spy estimator performs quite poorly compared the estimator from \cite{pinto}. Even the hop distances, illustrated in Figures \ref{fig:ba_hops} and \ref{fig:ba_hops_p1}, are significantly higher than the other tested estimators for the first-spy estimator without pruning. As such, the Pinto \emph{et al.} estimator may be quite powerful when there is no direction information available; this problem setting was not explored in their original paper.
+
+\begin{figure*}[ht] \label{ fig7} 
+  \begin{minipage}[b]{0.48\linewidth}
+    \includegraphics[width=3in]{figures/ba_graphs} 
+    \caption{Probability of detection vs. spy fraction over Barabasi-Albert graphs with minimum degree $m=5$ and number of nodes $N=100$.} 
+\label{fig:ba_graph}
+  \end{minipage} 
+\begin{minipage}[b]{0.48\linewidth}
+    \includegraphics[width=3in]{figures/ba_graphs_p1} 
+    \caption{Probability of detection vs. fraction over Barabasi-Albert graphs with minimum degree $m=1$ and number of nodes $N=100$.} 
+\label{fig:ba_graph_p1}
+  \end{minipage}
+  \begin{minipage}[b]{0.48\linewidth}
+    \includegraphics[width=3in]{figures/ba_hops} 
+    \caption{Hop distance from estimate to true source vs. spy fraction over Barabasi-Albert graphs with minimum degree $m=5$ and number of nodes $N=100$.} 
 \label{fig:ba_hops}
-%\vspace*{-0.4in}
-\end{figure}
+  \end{minipage} 
+  \hfill
+  \begin{minipage}[b]{0.48\linewidth}
+    \includegraphics[width=3in]{figures/ba_hops_p1} 
+    \caption{Hop distance from estimate to true source vs. spy fraction over Barabasi-Albert graphs with minimum degree $m=1$ and number of nodes $N=100$.} 
+  \end{minipage} 
+\label{fig:ba_hops_p1}
+\end{figure*}
+
 
 \subsection{Facebook dataset}
 
