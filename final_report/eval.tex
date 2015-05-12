@@ -3,7 +3,7 @@
 
 The evaluation of our work is executed on a discrete-event simulator written in Python. This simulator is similar to existing discrete-event simulators such as ns3. Events are put onto a priority queue ordered by time, and executed in a single loop.
 
-This simulator takes in as input different network structures with a list of nodes, links, and node types. 
+The simulator takes in as input different network structures with a list of nodes, links, and node types. 
 Nodes can be either honest or malicious. As mentioned before, we simulate passive adversaries: malicious nodes are honest-but-curious. Whenever a malicious node receives a message, it adds the message, along with the time at which the message is received, to a list of intercepted messages. The timestamp used is the global simulator time, thus we assume that the spies' clocks are roughly synchronized (or that the synchronization time is much smaller than). 
 
 At the start of a simulation run, a certain percentage of the nodes are compromised. The percentage number can be tweaked to adjust the number of malicious nodes in the network. The simulator then runs for some number of time steps and produces a list of messages intercepted from malicious nodes. After the simulation, the estimators take in the list of timestamped messages and produce guesses for the true source of the message.
@@ -19,14 +19,14 @@ In this replication process, we encountered four primary mistakes or omissions i
 \end{enumerate}
 For point 3, the corresponding author of \cite{pinto} sent us part of his simulation code two days before the project due date, so we have revised our discussion to reflect what we learned from reading his code. Namely, his code helped explain how they prune graphs that are not tree-structured. 
 
-For general graphs, pruning takes place in two steps: 1) For each spy node, remove all graph edges that were not used to transmit the message to the spy. 2) Step 1 will leave the graph disconnected; keep the connected component that contains the spy with the earliest timestamp. The resultant subgraph is called $\mathcal G_a$, and the optimization in equation \ref{eq:general} occurs as normal over the honest nodes of $\mathcal G_a$ (rather than $\mathcal T_a$). 
+For general graphs, pruning takes place in two steps: 1) For each spy node, remove all graph edges that were not used to transmit the message to the spy. 2) Step 1 may leave the graph disconnected. If graph is disconnected, keep the connected component that contains the spy with the earliest timestamp. The resultant subgraph is called $\mathcal G_a$, and the optimization in equation \ref{eq:general} occurs as normal over the honest nodes of $\mathcal G_a$ (rather than $\mathcal T_a$). 
 
 On a tree, this pruning procedure corresponds to only using timestamps from the nearest spies; if two spies lie on the same path (as defined by the direction of message transmission), then the latter spy's information will be discarded. For example, in Figure \ref{fig:pruning}, $o_2$'s timestamp $t_2$ would be discarded, because the edge between $o_1$ and $o_2$ would be cut. This is a reasonable approach, because conditioned on $o_1$'s information, $t_2$ is independent and therefore cannot improve the estimate. 
 
 However, on a loopy graph, this approach discards viable message paths, thereby placing undue weight paths that might otherwise have a very low likelihood. For example, consider the graph in Figure \ref{fig:pruning2}. Even though the most likely path for the message is $0\rightarrow o_1\rightarrow 3 \rightarrow o_2$, pruning removes the edge between $o_1$ and node $3$, so the estimator acts as if the message traversed the path $0\rightarrow 4\rightarrow 5 \rightarrow 6 \rightarrow 7 \rightarrow 3 \rightarrow o_2$---a path with comparatively low likelihood. Although this pruning approach is not strictly correct, we will demonstrate that it performs well in practice. Indeed, our simulation results suggest that the high accuracy levels reported in \cite{pinto} over general graphs are in large part due to pruning.
 \begin{figure}[h]
 \centering
-\includegraphics[width= 3in]{figures/pruning2}
+\includegraphics{figures/pruning2}
 \caption{The pruning used in \cite{pinto} can lead to false likelihood computations over loopy graphs; the scheme discounts the possibility of a spy passing the message to another spy.
 %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
 }

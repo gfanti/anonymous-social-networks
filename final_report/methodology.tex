@@ -27,13 +27,11 @@ We study the ability of this adversary to deanonymize users through simulation. 
 \item[Fraction of spies:] The fraction of spies will greatly impact the deanonymization performance. Fewer spies means less information, and thus makes the true source much harder to track. Using simulation, we want to \emph{quantify} how many spies are needed to efficiently find the true source.
 \item[Location of spies:] We hypothesize that selecting spies as high-degree nodes will increase the probability of detection, as popular nodes are more likely to see and propagate the message. However, this may be unrealistic in practice, as popular individuals (i.e., high-degree nodes) may hold more social leverage and may therefore resist recruitment attempts. A uniform distribution of spy nodes seems feasible for an adversary with moderate but limited resources. 
 \item[Propagation latency:] The propagation latencies $\theta_{ij}$ are likely to depend on many factors, such as the popularity of the social network, the habits of its users, and the application platform (e.g., mobile vs. desktop).
-In simulation, we model the propagation latency in two ways: using a Gaussian distribution with a high mean-to-standard-deviation ratio, and a geometric random variable. 
+In simulation, we model the propagation latency in two ways: using a Gaussian distribution with a high mean-to-standard-deviation ratio. 
 \item[Estimator:] To maximize probability of detection, i.e. $P(\hat v=v^*)$, the adversary should use a maximum-likelihood (ML) estimator. However, computationally-efficient ML estimators are not known for general graph structures and propagation delay models. We therefore try different methods of estimation. The majority of our effort goes towards adapting the estimator in~\cite{pinto} to our spy-based adversarial model.
 \end{description}
 
 \subsection{Estimators}
-Initially, we considered a number of heuristic estimators that achieved low detection rates due to a mismatch between the estimator design and the underlying spreading model. We eventually settled on two estimators, which we will discuss in this section.
-
 
 \subsubsection{ML estimator for trees}
 The observer model estimator~\cite{pinto} is a maximum likelihood estimator. The setup is quite similar to our simulation: given a graph $\mathcal G$, there exists a set of $K$ observers that observe information transmitted in the network. The collected information has a timestamp, as well as direction information (e.g. observer $o$ receives the message from neighbor $v$). This is the main difference between \cite{pinto} and our work; we do not assume that spies have direction information. \cite{pinto} also assumes that propagation delays are modeled by iid Gaussian random variables with distribution $\mathcal N(\mu,\sigma^2)$. We start by defining some terms:
