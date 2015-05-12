@@ -39,12 +39,14 @@ if __name__ == '__main__':
         num_singular = 0
         # percent_malicious = 90
         graph_size = 'N' + str(num_nodes) + '_BA'
-        directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
+        #directory = 'data/' + graph_size + '/malicious_' + str(percent_malicious) + '/'
         for i in range(trials):
+            #i += 1000
             if (i % 50) == 0:
                 print('Trial ',i)
-            parser = Parser( directory + 'output' + str(i+1))
-            # parser = Parser(sys.argv[1] + '/out' + str(i+1))
+            #parser = Parser( directory + 'output' + str(i+1))
+            parser = Parser(sys.argv[1] + "/infect_" + str(percent_malicious) + '/out' + str(i+1))
+            print "Currently testing file", sys.argv[1] + "/infect_" + str(percent_malicious) + '/out' + str(i+1)
             source, adjacency, malicious_nodes, timestamps, infectors = parser.parse_file()
             
             e = estimation.Estimator(adjacency, malicious_nodes, timestamps, infectors)
@@ -156,7 +158,8 @@ if __name__ == '__main__':
         hops_rand.append(sum(rand_distances)/float(len(rand_distances)))
         
     
-        write_filename = 'data/' + graph_size + '/results/res.mat'
+        #write_filename = 'data/' + graph_size + '/results/res.mat'
+        write_filename = 'results/res.mat'
         savemat(write_filename, dict(num_singular = num_singular,
                                      trials = trials, 
                                      pds_opt = pds_opt,

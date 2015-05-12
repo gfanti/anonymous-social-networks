@@ -1,4 +1,5 @@
 \section{Evaluation}
+\label{sec:eval}
 
 The evaluation of our work is executed on a discrete-event simulator written in Python. This simulator is similar to existing discrete-event simulators such as ns3. Events are put onto a priority queue ordered by time, and executed in a single loop.
 
@@ -92,4 +93,29 @@ Conversely, when there is no direction-of-infection information, the first-spy e
 
 \subsection{Facebook dataset}
 
-Randomized graphs provide decent estimates for the estimators' effectivness, but they are still different from real datasets. In order to test our estimators on realistic data, we use a Facebook dataset~\cite{viswanath-2009-activity} from New Orleans. The dataset contains all of the user-to-user connections on Facebook in New Orleans. Since the number of users is large, we use \emph{ego sampling} on the dataset. Ego sampling takes a random node from the graph and samples all nodes within $n$ hops from the initial node. For our experiments, we use $n = 2$.
+Randomized graphs provide decent estimates for the estimators' effectivness, but they are still different from real datasets. In order to test our estimators on realistic data, we use a Facebook dataset~\cite{viswanath-2009-activity} from New Orleans. The dataset contains all of the user-to-user connections on Facebook in New Orleans. Since the number of users is large, we take the first 800 nodes in the graph (the dataset orders the links) and construct a connected subgraph. We then use this subgraph to run our experiments by randomly choosing a propagation source. Because of limited time, we ran 30 trials for both 5\% and 15\% spy ratio.
+
+Table~\ref{table:fb:05} and table~\ref{table:fb:15} show the estimators' results for 30 trials with 5\% and 15\% randomly corrupted nodes. 
+
+\begin{figure}
+\label{table:fb:05}
+\begin{tabular}{c | c | c}
+  & With direction & W/o direction \\
+  \hline
+  First spy & 30.00 \% & 0.00 \% \\ 
+  Max Likelihood & 40.00 \% & 16.67 \% \\
+\end{tabular}
+\caption{Estimators' performance (percentage of accurate for 30 trials) on the Facebook dataset: 5\% random spies}
+\end{figure}
+
+
+\begin{figure}
+\label{table:fb:15}
+\begin{tabular}{c | c | c}
+  & With direction & W/o direction \\
+  \hline
+  First spy & 66.67 \% & 3.33 \% \\ 
+  Max Likelihood & 63.33\% & 26.67 \% \\
+\end{tabular}
+\caption{Estimators' performance (percentage of accurate for 30 trials) on the Facebook dataset: 15\% random spies}
+\end{figure}
