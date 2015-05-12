@@ -10,7 +10,7 @@ We assume an application model that is similar to Secret~\cite{secret}.
 \label{fig:secret_infrastructure}
 \end{figure}
 Fig.~\ref{fig:secret_infrastructure} shows how a typical anonymous microblogging network works. Users are connected to friends as in a regular social network; we model this social network as a graph $\mathcal G(V,E)$, where $V$ denotes the set of vertices, or participants, in the network, and $E$ denotes the set of edges. When a source node, Alice, decides to send a message to her friends, her message is routed to a centralized server first. We denote the source node by $v^*$. The server propagates the message to Alice's neighbors, $\mathcal N(v^*)$. Alice's neighbors do not know who sent or authored the message. %To them, the message is from the centralized server instead of directly from Alice, and does not have any information about the sender herself. 
-If one of Alice's friends decides to ``like'' the message, the message will be further propagated to her friend's friends. Thus, whenever a user receives a message, he/she does not know if a neighboring friend sent it, or if it was simply liked by a friend. We assume that propagation occurs with some time delay, which captures the time between the server pushing a message and the receipient actually seeing it. We model the delay between a user $i$ liking a message and the user's friend $j$ seeing the message as a random variable $\theta_{ij}$; the $\theta_{ij}$'s, or delays across each edge in the social graph, are assumed to be iid random variables. We do not specify the distribution of $\theta_{ij}$ \emph{a priori}; in principle, this should be informed by measurements of real social network usage.
+If one of Alice's friends decides to ``like'' the message, the message will be further propagated to her friend's friends. Thus, whenever a user receives a message, he/she does not know if a neighboring friend sent it, or if it was simply liked by a friend. We assume that propagation occurs with some time delay, which captures the time between the server pushing a message and the recipient actually seeing it. We model the delay between a user $i$ liking a message and the user's friend $j$ seeing the message as a random variable $\theta_{ij}$; the $\theta_{ij}$'s, or delays across each edge in the social graph, are assumed to be iid random variables. We do not specify the distribution of $\theta_{ij}$ \emph{a priori}; in principle, this should be informed by measurements of real social network usage.
 
 Our adversarial model considers a moderately powerful adversary that is able to compromise certain users in the social network. This might occur by offering incentives to users and recruiting them to act as spies. The spies are not active, but are instead passive observers. The only thing that differentiates spies from honest users is that spies collect all observed messages (along with timestamps), and then send this information to the adversary. The adversary uses the collected message timetamps to attempt to track down the perpetrator of the message.
 We assume there are $K$ spies in the network, $o_1,\ldots,o_K$. For a given message $m$, each spy $o_i$ will collect the timestamp $t_i^{(m)}$ at which it first receives the message. The adversary must then output an estimate $\hat v$, which it believes to be the true source of message $m$. %Therefore, the 
@@ -32,7 +32,7 @@ In simulation, we model the propagation latency in two ways: using a Gaussian di
 \end{description}
 
 \subsection{Estimators}
-Initially, we attempted to come up with some estimators on our own. \todo{Should we mention the Jordan estimators here?}
+Initially, we attempted to come up with some estimators on our own.
 
 
 
@@ -49,7 +49,7 @@ The next term is the expected delay, which is the delay that one \emph{should} o
 \begin{equation}
   \boldsymbol{\mu}_{s,k} = \mu (|P(s, o_{k+1})| - |P(s, o_1)|)
 \end{equation}
-where $|P(u, v)|$ denotes the number of edges on the path that connects nodes $u$ and $v$. Finally, we define a scaled covariance matrix, which represents the covariance of the jointly-gaussian delay random variable:
+where $|P(u, v)|$ denotes the number of edges on the path that connects nodes $u$ and $v$. Finally, we define a scaled covariance matrix, which represents the covariance of the jointly-Gaussian delay random variable:
 \begin{equation}
   (\boldsymbol{\Lambda}_s)_{k, i} = \begin{cases}
     |P(o_1, o_{k+1})| & \text{if $k = i$} \\
