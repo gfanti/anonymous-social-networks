@@ -58,8 +58,26 @@ Figure \ref{fig:hops_vs_spies} shows the corresponding hop distances between the
 \subsection{Barabasi-Albert graphs}
 We next considered random graphs with loops. \cite{pinto} considers a number of random graph structures, including Apollonian, Erdos-Renyi, and Barabasi-Albert. Due to time constraints, we only considered the latter. However, as mentioned earlier, we did not have access to the parameters used to generate the graphs in \cite{pinto}. To verify that we computed the estimator correctly, we considered a range of different parameters, and show that our results are at least plausibly consistent with the results provided in \cite{pinto}.
 
-Figure \ref{} shows the probability of detection as a function of the fraction of spies for Barabasi-Albert graphs with $N=100$ nodes. We varied the minimum degree $d$ from 1 to 5. Each datapoint is averaged over 2000 trials. First, the figure illustrates that our numbers are at least plausible given the measurement provided in \cite{pinto}. Given the strong performance on trees, we believe that our estimator implementation is correct. %It also gives the right numbers when we compute the likelihoods for small graphs by hand. 
+Figure \ref{fig:ba_graphs} shows the probability of detection as a function of the fraction of spies for Barabasi-Albert graphs with $N=100$ nodes. We varied the minimum degree $d$ from 1 to 5. Each datapoint is averaged over 2000 trials. First, the figure illustrates that our numbers are at least plausible given the measurement provided in \cite{pinto}. Given the strong performance on trees, we believe that our estimator implementation is correct. %It also gives the right numbers when we compute the likelihoods for small graphs by hand. 
 However, note that the nearest-spy estimator with pruning performs as well or better than the `ML' estimator (which is not actually ML over general graph structures). Moreover, by plotting the pruned graph $\mathcal G_a$, we observed that $\mathcal G_a$ generally has very few honest nodes (about 10) when the fraction of spies is about 40; the pruned graph size decreases with spy fraction. Finally, the nearest-spy estimator with pruning always returns a node from $\mathcal G_a$ by construction.  This suggests that \emph{graph-pruning} is primarily responsible for the high accuracy rates in \cite{pinto} over general graphs, not the estimator itself. Moreover, the first-spy estimator achieves comparable accuracy to the ML estimator with orders of magnitude less computation; the first-spy estimator has complexity $O(1)$ as compared to $O(N^3)$ for the ML estimator. 
+
+\begin{figure}
+\centering
+\includegraphics[height = 2.4in]{figures/ba_graphs}
+\caption{Placeholder. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
+}
+\label{fig:ba_graphs}
+%\vspace*{-0.4in}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[height = 2.4in]{figures/ba_hops}
+\caption{Placeholder. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
+}
+\label{fig:ba_hops}
+%\vspace*{-0.4in}
+\end{figure}
 
 \subsection{Facebook dataset}
 
