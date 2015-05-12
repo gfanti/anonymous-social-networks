@@ -1,12 +1,16 @@
 \section{Discussion}
 
-The results in \S\ref{sec:eval} reveals some potential problems for the maximum likelihood estimator. 
-
-There are various aspects of ML estimator that do not make sense algorithmically. 
-
+The results in \S\ref{sec:eval} suggest two main takeaway messages, which apply when the underlying graph is loopy and exhibits a power-law degree distribution:
 \begin{itemize}
-\item The estimator gives a log likelihood of 0 if a node $s$ is equidistant from all spy nodes, even if the timing information shows that $s$ is unlikely to be the true source. For example in Fig.~\ref{??}, we see that the ~~~~
-\end{itemize}
+\item If the adversary has direction information for spy nodes, the first-spy estimator performs as well or better than the ML estimator, while using a small fraction of the computation.
+\item If the adversary does not have access to direction information, the probability of deanonymization can decrease by as much as 50 percent, depending on the graph structure. In this case, the ML estimator exhibits significantly higher deanonymization accuracy than the first-spy estimator.
+\end{itemize} 
+
+%There are various aspects of ML estimator that do not make sense algorithmically. 
+%
+%\begin{itemize}
+%\item The estimator gives a log likelihood of 0 if a node $s$ is equidistant from all spy nodes, even if the timing information shows that $s$ is unlikely to be the true source. For example in Fig.~\ref{??}, we see that the ~~~~
+%\end{itemize}
 
 The estimator's pruning process is questionable. Given a graph $G$, the estimator prunes the graph using the direction of the propagation message. For every spy node $n_s$ that receives a message, the node prunes all edges that are not the propagation edge. After the pruning is done, the estimator discards all disconnected components except for the one containing the spy node with the earliest delay. After the pruning is done, the maximum likelihood estimator is run on the graph.
 
