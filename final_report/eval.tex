@@ -38,23 +38,27 @@ However, on a loopy graph, this approach discards viable message paths, thereby 
 We first tested the estimator on trees. As assumed in \cite{pinto}, each node transmits the message to its neighbors with an iid delay that is distributed according to $\mathcal N(2,0.5)$. Figure \ref{fig:pd_vs_spies} shows the probability of detection as a function of the fraction of spies over a 3-regular tree. We ran the simulation for 8 timesteps, leading to an average graph size of 75 nodes. Each datapoint is averaged over 4500 trials. Although \cite{pinto} does not provide simulation results over trees, we observe high detection probabilities for relatively low fractions of spies; with only 5 percent of the nodes spying, the source gets caught with probability 0.3. Note also that the ML estimator performs equally well with or without pruning (the plot lines are jittered to show both); this is because over trees, pruning never removes feasible candidates nodes or edges. We will see later that pruning over loopy graphs can remove feasible edges, and thereby impact the probability of detection. 
 For reference, Figure \ref{fig:pd_vs_spies} also shows the probability of detection by the first-spy estimator. The ML estimator clearly outperforms the first-spy estimator, which is a good sanity check. Moreover, the first-spy estimator with pruning closely follows the theoretically-expected probability of detection; for a fraction of spies $p$, this probability grows as $P(\hat v=v^*)=1-(1-p)^d$ where $d$ denotes the degree of the underlying tree.
 Figure \ref{fig:hops_vs_spies} shows the corresponding hop distances between the estimated source and the true source. We observe that with as few as 30 percent spies, this average hop distance is less than 0.1; the diameter of the graph is 8 hops. 
-\begin{figure}
-\centering
-\includegraphics[height = 2.4in]{figures/pd_vs_spies}
-\caption{Probability of detection, i.e. $P(\hat v = v^*)$, as a function of the spy probability $p$. This plot was generated over 3-regular trees. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
-}
-\label{fig:pd_vs_spies}
+\begin{figure*}
+  \begin{minipage}[c]{0.49\linewidth}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/pd_vs_spies}
+    \caption{Probability of detection, i.e. $P(\hat v = v^*)$, as a function of the spy probability $p$. This plot was generated over 3-regular trees. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
+    }
+    \label{fig:pd_vs_spies}
+  \end{minipage}
 %\vspace*{-0.4in}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[height = 2.4in]{figures/hops_vs_spies}
-\caption{Hop distance of the estimate $\hat v$ from the true source $v^*$ as a function of the spy probability $p$. This plot was generated over 3-regular trees. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
-}
-\label{fig:hops_vs_spies}
+%\end{figure}
+  \hfill
+%\begin{figure}[ht]
+  \begin{minipage}[c]{0.49\linewidth}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/hops_vs_spies}
+    \caption{Hop distance of the estimate $\hat v$ from the true source $v^*$ as a function of the spy probability $p$. This plot was generated over 3-regular trees. %Delays $\theta_{ij}$ are modeled as Gaussians $\mathcal N(2,0.5)$, and spreading was run for 8 time units.
+    }
+    \label{fig:hops_vs_spies}
+  \end{minipage}
 %\vspace*{-0.4in}
-\end{figure}
+\end{figure*}
 
 \subsection{Barabasi-Albert graphs}
 We next considered random graphs with loops. \cite{pinto} considers a number of random graph structures, including Apollonian, Erdos-Renyi, and Barabasi-Albert. Due to time constraints, we only considered the latter. However, as mentioned earlier, we did not have access to the parameters used to generate the graphs in \cite{pinto}. To verify that we computed the estimator correctly, we considered a range of different parameters, and show that our results are at least plausibly consistent with the results provided in \cite{pinto}.
